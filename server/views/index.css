@@ -1,0 +1,45 @@
+* { padding: 0; margin: 0; }
+canvas { background: #3C3C3C; display: block; margin: 0 auto; }
+
+#message-box {
+    width: 97%;
+    display: inline-block;
+    height: 180px;
+}
+#msg {
+    height: 180px;
+    overflow: auto;
+    padding: 12px;
+}
+
+#chat-box{
+   position: absolute;  top: 0px;
+}
+
+
+.magiccard{overflow:hidden;}
+.magiccard img{transform:translate(0px,80px)scale(1.0,1.0);transition: all 0.2s ease-out;z-index: 0;}
+.magiccard img:hover{transform:translate(40px,-70px)scale(1.8,1.8);z-index: 10;}
+.magiccard {overflow:visible;width: 8rem;}
+
+.card0{
+  animation: cardFrames linear 0.5s;
+}
+.card1{
+  animation: cardFrames linear 0.5s;
+}
+.card2{
+  animation: cardFrames linear 0.5s;
+}
+.card3{
+  animation: cardFrames linear 0.5s;
+}
+
+@keyframes cardFrames{
+  0% {
+    transform:  translate(303px,155px)rotate(360deg);
+  }
+  100% {
+    transform:  translate(0,0)  rotate(0deg) ;
+  }
+}

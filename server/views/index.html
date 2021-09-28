@@ -46,14 +46,75 @@
       <div style="min-height: 120px;">
         <div class="collapse collapse-horizontal show" id="chat_box_collapse">
           <div id="message-box"  class="w-25">
-            <div class="input-group" id="chat-box">
+            <div class="input-group" id="chat-box" style="z-index: 10;">
               <span class="input-group-text text-light bg-dark" id="basic-addon1">
                 <button onclick="javascript:document.getElementById('talkroomOpen').style.display='block'" class="btn-close btn-close-white" type="button" data-bs-toggle="collapse" data-bs-target="#chat_box_collapse" aria-expanded="false" aria-controls="chat_box_collapse">
                 </button>
               </span>
-              <input id="message" type="text" class="form-control text-light bg-dark" placeholder="聊天欄" aria-label="聊天欄" aria-describedby="basic-addon1">
+              <input id="message" type="text" class="form-control text-light bg-dark" placeholder="聊天欄" aria-label="聊天欄" aria-describedby="basic-addon1" autocomplete="off">
             </div>
+            <div class="msg-bg"></div>
             <div id="msg" align="left"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="fixed-top" style="width:30vw;">
+    <div align="left">
+
+      <button onclick="javascript:this.style.display='none'" id="setBoxOpen" class="btn btn-dark btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#set_box_collapse" aria-expanded="false" aria-controls="set_box_collapse">
+        <span class="input-group-text text-light bg-dark" id="basic-addon1"><i class="fas fa-cog"></i></span>
+      </button>
+      <div style="min-height: 120px;">
+        <div class="collapse collapse-horizontal" id="set_box_collapse">
+          <div id="set-box">
+            <span class="input-group-text text-light bg-dark" id="basic-addon1" style="width:50px;">
+              <button onclick="javascript:document.getElementById('setBoxOpen').style.display='block'" class="btn-close btn-close-white" type="button" data-bs-toggle="collapse" data-bs-target="#set_box_collapse" aria-expanded="false" aria-controls="set_box_collapse">
+              </button>
+            </span>
+            <div class="rounded text-light bg-dark" id="basic-addon1">
+              <hr>
+              <strong>卡牌施放模式</strong>
+              <div class="container">
+                <div class="row align-items-start">
+                  <div class="col form-check">
+                    <input class="form-check-input" type="radio" name="flexRadioDefault" id="CardUseMode_0" checked>
+                    <label class="form-check-label" for="flexRadioDefault2">
+                      QERF對應四個鍵位進行施放
+                    </label>
+                  </div>
+                  <div class="col form-check">
+                    <input class="form-check-input" type="radio" name="flexRadioDefault" id="CardUseMode_1">
+                    <label class="form-check-label" for="flexRadioDefault1">
+                      QE更換施放卡牌 Space施放
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <hr>
+            </div>
+            <div class="rounded text-light bg-dark" id="basic-addon1">
+              <hr>
+              <strong>顯示設定</strong>
+              <div class="container">
+                <div class="row align-items-start">
+                  <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" value="" id="displayWaveCheck" checked>
+                    <label class="form-check-label" for="displayWaveCheck">
+                      是否顯示波浪
+                    </label>
+                  </div>
+                  <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" value="" id="displayWithoutLagCheck">
+                    <label class="form-check-label" for="displayWithoutLagCheck">
+                      顯示即時玩家訊息(默認設定上系統會特殊處理玩家資料使您的遊戲更加流暢 如網路環境差請勿勾選)
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <hr>
+            </div>
           </div>
         </div>
       </div>
@@ -93,9 +154,13 @@
     </div>
     -->
     <div align="left">
+      <div id="cardUseAnimation"></div>
+    </div>
+    <div align="left">
       <div class="row align-items-start" id="card">
 
       </div>
+    </div>
   </div>
 
   <canvas id="obs_map" width="4230" height="1650" style="display: none;"></canvas>
@@ -121,7 +186,60 @@
     <img src="views/img/effect/2.png" id="effect2">
 
     <img src="views/img/hudJewel_yellow.png" id="mp_heart">
-    <img src="views/img/hudJewel_yellow_empty.png" id="mp_heart_empty">
+    <img src="views/img/hp.png" id="hp">
+    <img src="views/img/hp_e.png" id="hp_e">
+    <img src="views/img/mp.png" id="mp">
+    <img src="views/img/mp_e.png" id="mp_e">
+    <img src="views/img/bp.png" id="bp">
+    <img src="views/img/bp_e.png" id="bp_e">
+
+    <img src="views/img/particle/explosion_1.png" id="explosion_1">
+    <img src="views/img/particle/explosion_2.png" id="explosion_2">
+    <img src="views/img/particle/explosion_3.png" id="explosion_3">
+    <img src="views/img/particle/explosion_4.png" id="explosion_4">
+    <img src="views/img/particle/explosion_5.png" id="explosion_5">
+    <img src="views/img/particle/explosion_6.png" id="explosion_6">
+    <img src="views/img/particle/explosion_7.png" id="explosion_7">
+    <img src="views/img/particle/explosion_8.png" id="explosion_8">
+    <img src="views/img/particle/explosion_9.png" id="explosion_9">
+    <img src="views/img/particle/explosion_10.png" id="explosion_10">
+    <img src="views/img/particle/explosion_11.png" id="explosion_11">
+    <img src="views/img/particle/explosion_12.png" id="explosion_12">
+    <img src="views/img/particle/explosion_13.png" id="explosion_13">
+    <img src="views/img/particle/explosion_14.png" id="explosion_14">
+    <img src="views/img/particle/explosion_15.png" id="explosion_15">
+    <img src="views/img/particle/explosion_16.png" id="explosion_16">
+    <img src="views/img/particle/explosion_17.png" id="explosion_17">
+    <img src="views/img/particle/explosion_18.png" id="explosion_18">
+    <img src="views/img/particle/explosion_19.png" id="explosion_19">
+    <img src="views/img/particle/explosion_20.png" id="explosion_20">
+    <img src="views/img/particle/explosion_21.png" id="explosion_21">
+    <img src="views/img/particle/explosion_22.png" id="explosion_22">
+    <img src="views/img/particle/explosion_23.png" id="explosion_23">
+    <img src="views/img/particle/explosion_24.png" id="explosion_24">
+    <img src="views/img/particle/explosion_25.png" id="explosion_25">
+
+    <img src="views/img/skill/s0.png" id="s0_icon">
+    <img src="views/img/skill/1_s1.png" id="1_s1_icon">
+    <img src="views/img/skill/1_s2.png" id="1_s2_icon">
+    <img src="views/img/skill/1_s3.png" id="1_s3_icon">
+    <img src="views/img/skill/b_beegen.png" id="b_beegen">
+    <img src="views/img/skill/b_flowergen.png" id="b_flowergen">
+    <img src="views/img/skill/b_fort.png" id="b_fort">
+    <img src="views/img/skill/b_hptower.png" id="b_hptower">
+    <img src="views/img/skill/b_wall.png" id="b_wall">
+
+    <img src="views/img/build/beegen_blue.png" id="beegen_blue">
+    <img src="views/img/build/beegen_red.png" id="beegen_red">
+    <img src="views/img/build/flowergen_blue.png" id="flowergen_blue">
+    <img src="views/img/build/flowergen_red.png" id="flowergen_red">
+    <img src="views/img/build/fort_blue.png" id="fort_blue">
+    <img src="views/img/build/fort_blue_attack.png" id="fort_blue_attack">
+    <img src="views/img/build/fort_red.png" id="fort_red">
+    <img src="views/img/build/fort_red_attack.png" id="fort_red_attack">
+    <img src="views/img/build/hptower.png" id="hptower">
+    <img src="views/img/build/hptower_animation.png" id="hptower_animation">
+    <img src="views/img/build/wall.png" id="wall">
 
   </div>
   <script>
@@ -130,8 +248,10 @@
     var mp = 10;
     var msgBox = $('#msg');
     var socket = io();
+    var particlelist = {};
     var effectlist = {};
     var playerlist = {};
+    var buildinglist = {};
     var card = {};
     var playerlist_Now = {};
     var playerlist_buffer = {};
@@ -141,8 +261,13 @@
     var skillObjectlist_Now = {};
     var skillObjectlist_buffer = {};
     var skillObjectlist_UT = 0;
+    //set
+    var cardUseMode = 0;
+    var displayWave = true;
+    var displayWithoutLag = false;
+    //
     var cardchoose = 0;
-    var gamestat = 0;
+    var gamestat = 1;
     var gametick_player = 0;
     var gametick_skill = 0;
     var ping_player = 0.0;
@@ -150,6 +275,7 @@
     var ping_skill = 0.0;
     var ping_old_skill = 0.0;
     var ping = 0;
+    var hpanimation = {};
     var Window_height = window.innerHeight;
     var Window_width = window.innerWidth;
     var key_w = false;
@@ -164,7 +290,8 @@
       name : '訪客',
       health : 100,
       team : 1,
-      mp : 100,
+      mp : 10,
+      bp : 3,
       x : 0,
       y : 0,
       flip : false,
@@ -187,6 +314,7 @@
   <script src="scripts/Terrain.js"></script>
   <script src="scripts/jqueryrotate.js"></script>
   <script src="scripts/Carduse.js"></script>
+  <script src="scripts/jquery-ui/jquery-ui.js"></script>
 
 </body>
 </html>

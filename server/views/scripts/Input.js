@@ -1,3 +1,27 @@
+$( function() {
+  $('#message').autocomplete({
+    delay: 0,
+    minLength: 1,
+    source: [
+      {label: '/login dreamcity'},
+      {label: '/start'},
+      {label: '/data get'},
+      {label: '/data set'},
+      {label: '/gamerule friendlyFire true/false'},
+      {label: '/gamerule gameStartingJoin true/false'}
+    ],
+    create: function (event, ui) {
+      $(this).data('ui-autocomplete')._renderItem  = function (ul, item) {
+        return $("<li>").attr('data-value', item.label).append(
+          $("<div>").addClass('ui-menu-item-wrapper').append(
+            $("<b>").addClass('text-muted pl-2').html(item.label)
+          )
+        ).appendTo(ul);
+      };
+    }
+  });
+});
+
 document.onkeydown=function(event){
   let e = event || window.event || arguments.callee.caller.arguments[0];
   if(e){
@@ -16,22 +40,67 @@ document.onkeydown=function(event){
         break;
       case 32:
         if(gamestat == 2)
-          skillCardUse();
+          if(cardUseMode == 1)
+            skillCardUse();
         break;
       case 81:
         if(gamestat == 2){
-          cardchoose -= 1;
-          if(cardchoose < 0) cardchoose = 3;
-          for (var i = 0; i < 4; i++) $('#card'+i.toString()).rotate({angle:0});
-          $('#card'+cardchoose).rotate({animateTo:15,duration: 200});
+          if(cardUseMode == 1){
+            cardchoose -= 1;
+            if(cardchoose < 0) cardchoose = 3;
+            for (var i = 0; i < 4; i++) $('#card'+i.toString()).rotate({angle:0});
+            $('#card'+cardchoose).rotate({animateTo:15,duration: 200});
+          }else if(cardUseMode == 0){
+            cardchoose = 0
+            for (var i = 0; i < 4; i++) $('#card'+i.toString()).rotate({angle:0});
+            $('#card0').rotate({animateTo:15,duration: 200});
+            skillCardUse();
+          }
         }
         break;
       case 69:
         if(gamestat == 2){
-          cardchoose += 1;
-          if(cardchoose > 3) cardchoose = 0;
-          for (var i = 0; i < 4; i++) $('#card'+i.toString()).rotate({angle:0});
-          $('#card'+cardchoose).rotate({animateTo:15,duration: 200});
+          if(cardUseMode == 1){
+            cardchoose += 1;
+            if(cardchoose > 3) cardchoose = 0;
+            for (var i = 0; i < 4; i++) $('#card'+i.toString()).rotate({angle:0});
+            $('#card'+cardchoose).rotate({animateTo:15,duration: 200});
+          }else if(cardUseMode == 0){
+            cardchoose = 1;
+            for (var i = 0; i < 4; i++) $('#card'+i.toString()).rotate({angle:0});
+            $('#card1').rotate({animateTo:15,duration: 200});
+            skillCardUse();
+          }
+        }
+        break;
+      case 82:
+        if(gamestat == 2){
+          if(cardUseMode == 1){
+            cardchoose += 1;
+            if(cardchoose > 3) cardchoose = 0;
+            for (var i = 0; i < 4; i++) $('#card'+i.toString()).rotate({angle:0});
+            $('#card'+cardchoose).rotate({animateTo:15,duration: 200});
+          }else if(cardUseMode == 0){
+            cardchoose = 2;
+            for (var i = 0; i < 4; i++) $('#card'+i.toString()).rotate({angle:0});
+            $('#card2').rotate({animateTo:15,duration: 200});
+            skillCardUse();
+          }
+        }
+        break;
+      case 70:
+        if(gamestat == 2){
+          if(cardUseMode == 1){
+            cardchoose += 1;
+            if(cardchoose > 3) cardchoose = 0;
+            for (var i = 0; i < 4; i++) $('#card'+i.toString()).rotate({angle:0});
+            $('#card'+cardchoose).rotate({animateTo:15,duration: 200});
+          }else if(cardUseMode == 0){
+            cardchoose = 3;
+            for (var i = 0; i < 4; i++) $('#card'+i.toString()).rotate({angle:0});
+            $('#card3').rotate({animateTo:15,duration: 200});
+            skillCardUse();
+          }
         }
         break;
       default:
@@ -62,12 +131,39 @@ document.onkeyup=function(event){
 
 function gameMouseInput(){
   offset = $("#Game_Bg").offset();
-  $('#Game_Bg').mousemove(function(e){
-    mouse_x = e.pageX - offset.left;
-    mouse_y = e.pageY - offset.top;
+  $(document).mousemove(function(e){
+    mouse_x = e.pageX - offset.left-32;
+    mouse_y = e.pageY - offset.top-64;
   });
 }
+$('#CardUseMode_0').change(function () {
+    cardUseMode = 0;
+    console.log('1');
+})
 
+$('#CardUseMode_1').change(function () {
+    cardUseMode = 1;
+    console.log('2');
+})
+$('#displayWaveCheck').on('change', function () {
+  if ($('#displayWaveCheck').prop('checked')) {
+    displayWave = true;
+  }
+  else{
+    displayWave = false;
+  }
+})
+$('#displayWithoutLagCheck').on('change', function () {
+  if ($('#displayWithoutLagCheck').prop('checked')) {
+    displayWithoutLag = true;
+  }
+  else{
+    displayWithoutLag = false;
+  }
+})
+
+
+/*手機介面操控*/
 function up(){
   key_w = true;
 }

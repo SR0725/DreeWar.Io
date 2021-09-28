@@ -41,6 +41,23 @@ document.addEventListener("DOMContentLoaded", () => {
     effectlist[Date.now()] = d;
   });//獲取效果資料
 
+  socket.on("particleDataGet", function (d) {
+    particlelist[Date.now()] = d;
+  });//獲取效果資料
+
+  socket.on("buildDataGet", function (d,index) {
+    buildinglist[index] = d;
+  });//獲取建築資料
+  socket.on("buildDataInt", function (d) {
+    buildinglist = d;
+  });//獲取建築資料
+  socket.on("buildDataUpdata", function (d,index) {
+    buildinglist[index] = d;
+  });//更新建築資料
+  socket.on("buildDataDel", function (index) {
+    delete buildinglist[index];
+  });//更新建築資料
+
   socket.on("die", function () {
     if(selfPlayer['team'] == 1){
       selfPlayer['x'] = 30;
@@ -88,17 +105,34 @@ function send_message(){
   message_input.val(''); //reset message input
 }
 
+//mpUse
+function mpUse(mp){
+  socket.emit("mpUse",{mpuse:mp});
+}
+//bpUse
+function bpUse(bp){
+  socket.emit("bpUse",{bpuse:bp});
+}
+
 /*遊戲個人資料傳輸*/
 function playerDataSend(){
   socket.emit("playerDataGet",{x:selfPlayer['x'],y:selfPlayer['y'],motion_x:selfPlayer['motion_x'],motion_y:selfPlayer['motion_y'],animation:selfPlayer['animation'],flip:selfPlayer['flip'],mp:mp});
 }
-/*遊戲個人資料傳輸*/
+/*遊戲資料資料傳輸*/
 function skillDataSend(SkillOb){
   socket.emit("skillDataGet",SkillOb);
 }
-/*遊戲個人資料傳輸*/
+/*遊戲效果資料傳輸*/
 function effectDataSend(effectOb){
   socket.emit("effectDataGet",effectOb);
+}
+/*遊戲粒子資料傳輸*/
+function particleDataSend(particleOb){
+  socket.emit("particleDataGet",particleOb);
+}
+/*遊戲建築資料傳輸*/
+function buildingDataSend(buildOb){
+  socket.emit("buildingDataGet",buildOb);
 }
 
 /*遊戲開始前*/

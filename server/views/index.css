@@ -62,7 +62,7 @@ canvas { background: #3C3C3C; display: block; margin: 0 auto; }
 
 
 .cardUse{
-  animation: cardUseFrames linear 1.0s;
+  animation: cardUseFrames linear 0.6s;
   animation-iteration-count: 1;
   animation-fill-mode : forwards;
   transform-origin: 50% 50%;

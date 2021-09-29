@@ -16,7 +16,8 @@ var skillindex = 0;       //系統紀錄SKILL列表長度用
 var effectindex = 0;      //系統紀錄EFFECT列表長度用
 var buildingindex = 0;      //系統紀錄building列表長度用
 var gametick = 0;         //遊戲時刻(每20MS加一)
-var password = 'dreamcity';
+
+//MP AND BP GET
 var beegen_count = {};
 beegen_count[1] = 0;
 beegen_count[2] = 0;
@@ -30,8 +31,16 @@ var mp1getTick = 0;
 var mp2getTick = 0;
 
 //設定用參數
+var password = 'dreamcity';
+
 var gameStartingJoin = false;
 var friendlyFire = false;
+
+var mpBasicRegVal = 5;
+var bpBasicRegVal = 15;
+var bpBasicRegMul = 0.8;
+var mpBasicRegMul = 0.8;
+
 
 io.on('connection', (socket) => {
     console.log('有人連線了!SocketId:'+socket.id);
@@ -209,14 +218,32 @@ function dataDeal_Player(){
 }
 
 function mp_bp_Get() {
-  if(mp1getTick > 10000*(Math.pow(0.9,flowergen_count[1])))
+  if(mp1getTick > mpBasicRegVal*1000*(Math.pow(mpBasicRegMul,flowergen_count[1]))){
     mp1getTick = 0;
-  if(mp1getTick > 10000*(Math.pow(0.9,flowergen_count[2])))
+    for (let [id ,player] of Object.entries(playerlist))
+      if(player['team'] == 1 && player['mp'] < 10)
+        player['mp'] += 1;
+  }
+  if(mp2getTick > mpBasicRegVal*1000*(Math.pow(mpBasicRegMul,flowergen_count[2]))){
     mp2getTick = 0;
-  if(bp1getTick > 30000*(Math.pow(0.9,beegen_count[1])))
+    for (let [id ,player] of Object.entries(playerlist))
+      if(player['team'] == 2 && player['mp'] < 10)
+        player['mp'] += 1;
+  }
+  if(bp1getTick > bpBasicRegVal*1000*(Math.pow(bpBasicRegMul,beegen_count[1]))){
     bp1getTick = 0;
-  if(bp2getTick > 30000*(Math.pow(0.9,beegen_count[2])))
+    for (let [id ,player] of Object.entries(playerlist))
+      if(player['team'] == 1 && player['bp'] < 3)
+        player['bp'] += 1;
+  }
+  if(bp2getTick > bpBasicRegVal*1000*(Math.pow(bpBasicRegMul,beegen_count[2]))){
     bp2getTick = 0;
+    for (let [id ,player] of Object.entries(playerlist))
+      if(player['team'] == 2 && player['bp'] < 3)
+        player['bp'] += 1;
+  }
+
+
   mp1getTick += 20;
   bp1getTick += 20;
   mp2getTick += 20;
@@ -452,6 +479,54 @@ function commandTest(msg,id){
             else
               io.to(id).emit("msg", {message: '你的權限無法使用該指令!',name: '世界之聲'});
             break;
+          case 'gameval':
+            if(oplist[id] == true)
+              if(command[1] == 'get'){
+                switch (command[2]) {
+                  case 'mpBasicRegVal':
+                    io.to(id).emit("msg", {message:'mp獲得時間基礎值為'+mpBasicRegVal,name: '世界之聲'});
+                    break;
+                  case 'bpBasicRegVal':
+                    io.to(id).emit("msg", {message:'bp獲得時間基礎值為'+bpBasicRegVal,name: '世界之聲'});
+                    break;
+                  case 'mpBasicRegMul':
+                    io.to(id).emit("msg", {message:'bp獲得時間基礎值為'+mpBasicRegMul,name: '世界之聲'});
+                    break;
+                  case 'bpBasicRegMul':
+                    io.to(id).emit("msg", {message:'bp獲得時間基礎值為'+bpBasicRegMul,name: '世界之聲'});
+                    break;
+                  default:
+                    io.to(id).emit("msg", {message:'查無此世界參數',name: '世界之聲'});
+                    break;
+                }
+              }else if(command[1] == 'set'){
+                switch (command[2]) {
+                  case 'mpBasicRegVal':
+                    mpBasicRegVal = command[3];
+                    io.to(id).emit("msg", {message:'mp獲得時間基礎值更改為'+mpBasicRegVal,name: '世界之聲'});
+                    break;
+                  case 'bpBasicRegVal':
+                    bpBasicRegVal = command[3];
+                    io.to(id).emit("msg", {message:'bp獲得時間基礎值更改為'+bpBasicRegVal,name: '世界之聲'});
+                    break;
+                  case 'mpBasicRegMul':
+                    mpBasicRegMul = command[3];
+                    io.to(id).emit("msg", {message:'花園生產倍率基數更改為'+mpBasicRegMul,name: '世界之聲'});
+                    break;
+                  case 'bpBasicRegMul':
+                    bpBasicRegMul = command[3];
+                    io.to(id).emit("msg", {message:'蜂之園生產倍率基數更改為'+bpBasicRegMul,name: '世界之聲'});
+                    break;
+                  default:
+                    io.to(id).emit("msg", {message:'查無此世界參數',name: '世界之聲'});
+                    break;
+                }
+              }else{
+                io.to(id).emit("msg", {message: '指令輸入不完全!',name: '世界之聲'});
+              }
+            else
+              io.to(id).emit("msg", {message: '你的權限無法使用該指令!',name: '世界之聲'});
+            break;
           case 'passwordchange':
             if(oplist[id] == true){
               password = command[1];
@@ -482,7 +557,7 @@ function commandTest(msg,id){
 }//偵測客戶端的訊息是否為遊戲指令
 
 function shoot(bx,by,px,py,team){
-  var skillspeed = 16.0;
+  var skillspeed = 32.0;
   var motion_x = px-bx;
   var motion_y = py-by+64;
   var temp = Math.sqrt(Math.pow(motion_x, 2) + Math.pow(motion_y, 2));

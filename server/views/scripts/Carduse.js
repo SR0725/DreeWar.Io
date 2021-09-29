@@ -190,11 +190,9 @@ function cardDisplayChange(){
 }
 
 function skill0Down(){
-  var skillspeed = 16.0;
+  var skillspeed = 32.0;
   var motion_x = mouse_x-(Window_width/2);
-  console.log(mouse_x);
   var motion_y = mouse_y-(Window_height/2);
-  console.log(mouse_y);
   var temp = Math.sqrt(Math.pow(motion_x, 2) + Math.pow(motion_y, 2));
   motion_x = (skillspeed/temp)*motion_x;
   motion_y = (skillspeed/temp)*motion_y;
@@ -257,7 +255,6 @@ function skill1_1Down(){
   effectDataSend(effectObject);
   particleDataSend({particle:11,time:1,maintime:500,x:selfPlayer.x,y:selfPlayer.y})
 }
-
 function building1Down(){
   animationMainTime = 0;
   var buildObject = {
@@ -269,19 +266,17 @@ function building1Down(){
     team :selfPlayer['team']
   }
   buildingDataSend(buildObject);
-  particleDataSend({particle:0,time:1,maintime:500,x:selfPlayer.x,y:selfPlayer.y})
 }
 function building2Down(){
   var buildObject = {
     name : selfPlayer['name'],
-    x : selfPlayer['x'],
-    y : selfPlayer['y'],
+    x : selfPlayer['x']+32,
+    y : selfPlayer['y']+64,
     health :100,
     type :2,
     team :selfPlayer['team']
   }
   buildingDataSend(buildObject);
-  particleDataSend({particle:0,time:1,maintime:500,x:selfPlayer.x,y:selfPlayer.y})
 }
 function building3Down(){
   var buildObject = {
@@ -293,7 +288,6 @@ function building3Down(){
     team :selfPlayer['team']
   }
   buildingDataSend(buildObject);
-  particleDataSend({particle:0,time:1,maintime:500,x:selfPlayer.x,y:selfPlayer.y})
 }
 function building4Down(){
   var buildObject = {
@@ -305,7 +299,6 @@ function building4Down(){
     team :selfPlayer['team']
   }
   buildingDataSend(buildObject);
-  particleDataSend({particle:0,time:1,maintime:500,x:selfPlayer.x,y:selfPlayer.y})
 }
 function building5Down(){
   var buildObject = {
@@ -317,5 +310,4 @@ function building5Down(){
     team :selfPlayer['team']
   }
   buildingDataSend(buildObject);
-  particleDataSend({particle:0,time:1,maintime:500,x:selfPlayer.x,y:selfPlayer.y})
 }

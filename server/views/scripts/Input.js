@@ -5,10 +5,26 @@ $( function() {
     source: [
       {label: '/login dreamcity'},
       {label: '/start'},
-      {label: '/data get'},
-      {label: '/data set'},
+      {label: '/data get @a mp'},
+      {label: '/data get @a bp'},
+      {label: '/data get @a health'},
+      {label: '/data get @a speed'},
+      {label: '/data get @a name'},
+      {label: '/data get @a team'},
+      {label: '/data get @a damage'},
+      {label: '/data set @a mp'},
+      {label: '/data set @a bp'},
+      {label: '/data set @a health'},
+      {label: '/data set @a speed'},
+      {label: '/data set @a name'},
+      {label: '/data set @a team'},
+      {label: '/data set @a damage'},
       {label: '/gamerule friendlyFire true/false'},
-      {label: '/gamerule gameStartingJoin true/false'}
+      {label: '/gamerule gameStartingJoin true/false'},
+      {label: '/gameval set mpBasicRegVal'},
+      {label: '/gameval set bpBasicRegVal'},
+      {label: '/gameval get bpBasicRegVal'},
+      {label: '/gameval get mpBasicRegVal'}
     ],
     create: function (event, ui) {
       $(this).data('ui-autocomplete')._renderItem  = function (ul, item) {
@@ -138,13 +154,15 @@ function gameMouseInput(){
 }
 $('#CardUseMode_0').change(function () {
     cardUseMode = 0;
-    console.log('1');
 })
 
 $('#CardUseMode_1').change(function () {
     cardUseMode = 1;
-    console.log('2');
 })
+$("#fpsRange").change(function(){
+  document.getElementById("fpsValue").innerHTML = $(this).val();
+  FramePerSencond = $(this).val();
+});
 $('#displayWaveCheck').on('change', function () {
   if ($('#displayWaveCheck').prop('checked')) {
     displayWave = true;
@@ -159,6 +177,14 @@ $('#displayWithoutLagCheck').on('change', function () {
   }
   else{
     displayWithoutLag = false;
+  }
+})
+$('#displayBuildingHpCheck').on('change', function () {
+  if ($('#displayBuildingHpCheck').prop('checked')) {
+    displayBuildingHp = true;
+  }
+  else{
+    displayBuildingHp = false;
   }
 })
 

@@ -100,6 +100,10 @@
               <div class="container">
                 <div class="row align-items-start">
                   <div class="form-check form-switch">
+                    <label for="fpsRange" class="form-label">FPS最大值設置:<label id="fpsValue">50</label></label>
+                    <input type="range" class="form-range" min="10" max="150" id="fpsRange" value="50">
+                  </div>
+                  <div class="form-check form-switch">
                     <input class="form-check-input" type="checkbox" value="" id="displayWaveCheck" checked>
                     <label class="form-check-label" for="displayWaveCheck">
                       是否顯示波浪
@@ -109,6 +113,12 @@
                     <input class="form-check-input" type="checkbox" value="" id="displayWithoutLagCheck">
                     <label class="form-check-label" for="displayWithoutLagCheck">
                       顯示即時玩家訊息(默認設定上系統會特殊處理玩家資料使您的遊戲更加流暢 如網路環境差請勿勾選)
+                    </label>
+                  </div>
+                  <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" value="" id="displayBuildingHpCheck" checked>
+                    <label class="form-check-label" for="displayBuildingHpCheck">
+                      顯示建築血量條
                     </label>
                   </div>
                 </div>
@@ -162,7 +172,6 @@
       </div>
     </div>
   </div>
-
   <canvas id="obs_map" width="4230" height="1650" style="display: none;"></canvas>
   <div style="display:none">
     <img src="views/img/obs.png" id="obs">
@@ -192,6 +201,8 @@
     <img src="views/img/mp_e.png" id="mp_e">
     <img src="views/img/bp.png" id="bp">
     <img src="views/img/bp_e.png" id="bp_e">
+    <img src="views/img/mpUI_e.png" id="mpUI_e">
+    <img src="views/img/mpUI.png" id="mpUI">
 
     <img src="views/img/particle/explosion_1.png" id="explosion_1">
     <img src="views/img/particle/explosion_2.png" id="explosion_2">
@@ -234,23 +245,24 @@
     <img src="views/img/build/flowergen_blue.png" id="flowergen_blue">
     <img src="views/img/build/flowergen_red.png" id="flowergen_red">
     <img src="views/img/build/fort_blue.png" id="fort_blue">
-    <img src="views/img/build/fort_blue_attack.png" id="fort_blue_attack">
     <img src="views/img/build/fort_red.png" id="fort_red">
-    <img src="views/img/build/fort_red_attack.png" id="fort_red_attack">
     <img src="views/img/build/hptower.png" id="hptower">
     <img src="views/img/build/hptower_animation.png" id="hptower_animation">
     <img src="views/img/build/wall.png" id="wall">
+    <img src="views/img/build/obsSum.png" id="obsSum">
+    <img src="views/img/build/obsDel.png" id="obsDel">
 
   </div>
   <script>
-    var id = Date.now().toString();
-    var race = 1;
-    var mp = 10;
-    var msgBox = $('#msg');
-    var socket = io();
-    var particlelist = {};
+    var id = Date.now().toString();//獲取前端ID
+    var race = 1;//種族類別
+    var msgBox = $('#msg');//聊天欄
+    var socket = io();//取得socket包
+    var particlelist = {};//宣告粒子
     var effectlist = {};
     var playerlist = {};
+    var playerlistPos_buffer = {};
+    var playerlistPos = {};
     var buildinglist = {};
     var card = {};
     var playerlist_Now = {};
@@ -262,9 +274,11 @@
     var skillObjectlist_buffer = {};
     var skillObjectlist_UT = 0;
     //set
+    var FramePerSencond = 50;//fps
     var cardUseMode = 0;
     var displayWave = true;
     var displayWithoutLag = false;
+    var displayBuildingHp = true;
     //
     var cardchoose = 0;
     var gamestat = 1;
@@ -305,9 +319,9 @@
     obs_map_canvas = document.getElementById("obs_map");
     obstx = obs_map_canvas.getContext("2d");
     var obsimg = document.getElementById('obs');
-
   </script>
   <script src="scripts/Game.js"></script>
+  <script src="scripts/Draw.js"></script>
   <script src="scripts/Input.js"></script>
   <script src="scripts/MainLobby.js"></script>
   <script src="scripts/Socket.js"></script>
@@ -315,6 +329,7 @@
   <script src="scripts/jqueryrotate.js"></script>
   <script src="scripts/Carduse.js"></script>
   <script src="scripts/jquery-ui/jquery-ui.js"></script>
-
+  <script src="https://github.com/mrdoob/three.js/blob/master/examples/jsm/WebGL.js"></script>
+  <script src="https://threejs.org/build/three.js"></script>
 </body>
 </html>

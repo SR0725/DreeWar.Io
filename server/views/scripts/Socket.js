@@ -47,14 +47,26 @@ document.addEventListener("DOMContentLoaded", () => {
 
   socket.on("buildDataGet", function (d,index) {
     buildinglist[index] = d;
+    if(d['type'] == 2 || d['type'] == 5)
+      obstx.drawImage(obsSum, d['x']-100, d['y']-174,111,128);
   });//獲取建築資料
   socket.on("buildDataInt", function (d) {
     buildinglist = d;
+    setTimeout(function(){
+      for (let [index,build] of Object.entries(buildinglist)){
+        if(build['type'] == 2 || build['type'] == 5){
+          obstx.drawImage(obsSum, build['x']-100, build['y']-174,111,128);
+          console.log(build['x']-100, build['y']-174);
+        }
+      }
+    },2000);
   });//獲取建築資料
   socket.on("buildDataUpdata", function (d,index) {
     buildinglist[index] = d;
   });//更新建築資料
   socket.on("buildDataDel", function (index) {
+    if(buildinglist[index]['type'] == 2 || buildinglist[index]['type'] == 5)
+      obstx.drawImage(obsDel, buildinglist[index]['x']-100, buildinglist[index]['y']-174,111,128);
     delete buildinglist[index];
   });//更新建築資料
 

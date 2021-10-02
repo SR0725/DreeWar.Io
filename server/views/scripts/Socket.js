@@ -56,7 +56,6 @@ document.addEventListener("DOMContentLoaded", () => {
       for (let [index,build] of Object.entries(buildinglist)){
         if(build['type'] == 2 || build['type'] == 5){
           obstx.drawImage(obsSum, build['x']-100, build['y']-174,111,128);
-          console.log(build['x']-100, build['y']-174);
         }
       }
     },2000);
@@ -67,18 +66,15 @@ document.addEventListener("DOMContentLoaded", () => {
   socket.on("buildDataDel", function (index) {
     if(buildinglist[index]['type'] == 2 || buildinglist[index]['type'] == 5)
       obstx.drawImage(obsDel, buildinglist[index]['x']-100, buildinglist[index]['y']-174,111,128);
+    particleDataSend({particle:2,time:1,maintime:1000,x:buildinglist[index]['x'],y:buildinglist[index]['y']});
     delete buildinglist[index];
   });//更新建築資料
 
   socket.on("die", function () {
-    if(selfPlayer['team'] == 1){
-      selfPlayer['x'] = 30;
-      selfPlayer['y'] = 760;
-    }else if(selfPlayer['team'] == 2){
-      selfPlayer['x'] = 3987;
-      selfPlayer['y'] = 760;
-    }
-
+    selfPlayer['x'] = -3000;
+    selfPlayer['y'] = 0;
+    respawnTime = 500;
+    ActionBarShow('你死掉了!請等待十秒復活!');
   });//死去
 
   socket.on("hurt", function () {
@@ -128,7 +124,7 @@ function bpUse(bp){
 
 /*遊戲個人資料傳輸*/
 function playerDataSend(){
-  socket.emit("playerDataGet",{x:selfPlayer['x'],y:selfPlayer['y'],motion_x:selfPlayer['motion_x'],motion_y:selfPlayer['motion_y'],animation:selfPlayer['animation'],flip:selfPlayer['flip'],mp:mp});
+  socket.emit("playerDataGet",{x:selfPlayer['x'],y:selfPlayer['y'],motion_x:selfPlayer['motion_x'],motion_y:selfPlayer['motion_y'],animation:selfPlayer['animation'],flip:selfPlayer['flip'],mp:selfPlayer['mp']});
 }
 /*遊戲資料資料傳輸*/
 function skillDataSend(SkillOb){

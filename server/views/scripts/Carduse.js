@@ -100,6 +100,13 @@ function skillCardInit(){
 }
 
 function skillCardUse(){
+  if(respawnTime > 0) return;
+  if(card[cardchoose] > 1000){
+    if(buildingTest()){
+      ActionBarShow('距離其他建築過近,無法建築!');
+      return;
+    }
+  }
   switch (card[cardchoose]) {
     case 0:
       if(selfPlayer['mp'] >= 1){
@@ -111,6 +118,8 @@ function skillCardUse(){
         setTimeout(function(){
           document.getElementById("cardUseAnimation").innerHTML = '';
         },1000);
+      }else{
+        ActionBarShow('花粉魔力不足!');
       }
       break;
     case 11:
@@ -123,7 +132,35 @@ function skillCardUse(){
           setTimeout(function(){
             document.getElementById("cardUseAnimation").innerHTML = '';
           },1000);
+        }else{
+          ActionBarShow('花粉魔力不足!');
         }
+      break;
+    case 12:
+      if(selfPlayer['mp'] >= 3){
+        mpUse(3);
+        skill1_2Down();
+        cardDisplayChange();
+        $("#cardUseAnimation").append('<img src="views/img/skill/normal_attack.png" class="card-img-top cardUse" align="middle" style="width: 8rem;">');
+        setTimeout(function(){
+          document.getElementById("cardUseAnimation").innerHTML = '';
+        },1000);
+      }else{
+        ActionBarShow('花粉魔力不足!');
+      }
+      break;
+    case 13:
+      if(selfPlayer['mp'] >= 4){
+        mpUse(4);
+        skill1_3Down();
+        cardDisplayChange();
+        $("#cardUseAnimation").append('<img src="views/img/skill/normal_attack.png" class="card-img-top cardUse" align="middle" style="width: 8rem;">');
+        setTimeout(function(){
+          document.getElementById("cardUseAnimation").innerHTML = '';
+        },1000);
+      }else{
+        ActionBarShow('花粉魔力不足!');
+      }
       break;
     case 1001:
       if(selfPlayer['bp'] >= 3){
@@ -134,6 +171,8 @@ function skillCardUse(){
         setTimeout(function(){
           document.getElementById("cardUseAnimation").innerHTML = '';
         },1000);
+      }else{
+        ActionBarShow('蜂蜜不足!');
       }
       break;
     case 1002:
@@ -145,6 +184,8 @@ function skillCardUse(){
         setTimeout(function(){
           document.getElementById("cardUseAnimation").innerHTML = '';
         },1000);
+      }else{
+        ActionBarShow('蜂蜜不足!');
       }
       break;
     case 1003:
@@ -156,6 +197,8 @@ function skillCardUse(){
         setTimeout(function(){
           document.getElementById("cardUseAnimation").innerHTML = '';
         },1000);
+      }else{
+        ActionBarShow('蜂蜜不足!');
       }
       break;
     case 1004:
@@ -167,6 +210,8 @@ function skillCardUse(){
         setTimeout(function(){
           document.getElementById("cardUseAnimation").innerHTML = '';
         },1000);
+      }else{
+        ActionBarShow('蜂蜜不足!');
       }
       break;
     case 1005:
@@ -178,6 +223,8 @@ function skillCardUse(){
         setTimeout(function(){
           document.getElementById("cardUseAnimation").innerHTML = '';
         },1000);
+      }else{
+        ActionBarShow('蜂蜜不足!');
       }
       break;
     default:
@@ -215,10 +262,10 @@ function skill0Down(){
     maintime:1000
   }
   skillDataSend(SkillObject);
-  particleDataSend({particle:0,time:1,maintime:500,x:selfPlayer.x,y:selfPlayer.y})
 }
 
 function skill1_1Down(){
+
   selfPlayer['animation'] = 2;
   selfPlayer['motion_x'] = 0;
   selfPlayer['motion_y'] = 0;
@@ -253,7 +300,106 @@ function skill1_1Down(){
     maintime :5000,//維持時間(ms)
   }
   effectDataSend(effectObject);
-  particleDataSend({particle:11,time:1,maintime:500,x:selfPlayer.x,y:selfPlayer.y})
+}
+function skill1_2Down(){
+  var skillspeed = 12.0;
+  var motion_x = mouse_x-(Window_width/2);
+  var motion_y = mouse_y-(Window_height/2);
+  var temp = Math.sqrt(Math.pow(motion_x, 2) + Math.pow(motion_y, 2));
+  motion_x = (skillspeed/temp)*motion_x;
+  motion_y = (skillspeed/temp)*motion_y;
+  selfPlayer['animation'] = 2;
+  selfPlayer['motion_x'] = 0;
+  selfPlayer['motion_y'] = 0;
+  animationMainTime = 0;
+  var SkillObject = {
+    id : id,
+    name : selfPlayer['name'],
+    x : selfPlayer['x']+30,
+    y : selfPlayer['y']+70,
+    motion_x :motion_x,
+    motion_y :motion_y,
+    team :selfPlayer['team'],
+    skill :2,
+    race :race,
+    damage : 10,
+    time :0,
+    maintime:1000
+  }
+  skillDataSend(SkillObject);
+}
+function skill1_3Down(){
+  selfPlayer['animation'] = 2;
+  //尋找最近敵人
+  var finded = false;
+  var distance= 99999999;
+  var playerNeast = 0;//後端ID
+  var playerNeastID = id;//前端ID
+  for (let [index,player] of Object.entries(playerlist_Now)) {
+    if(player['id'] != id){
+      if(Math.pow(player['x']-selfPlayer['x'],2)+Math.pow(player['y']-selfPlayer['y'],2) < distance && player['x'] > -100){
+        playerNeast = index;
+        playerNeastID = player['id'];
+        distance = Math.pow(player['x']-selfPlayer['x'],2)+Math.pow(player['y']-selfPlayer['y'],2);
+        finded = true;
+      }
+    }
+  }
+  if(finded == false){
+    ActionBarShow('場上沒有任何存活的敵對玩家!');
+    return;
+  }
+  //追蹤敵人
+  Tracing = true;
+  TracingObmx = 0.025*(playerlist_Now[playerNeast]['x']-selfPlayer['x']);
+  TracingObmy = 0.025*(playerlist_Now[playerNeast]['y']-selfPlayer['y']);
+  TracingOs = 0;
+  //
+  selfPlayer['motion_x'] = 0;
+  selfPlayer['motion_y'] = 0;
+  animationMainTime = 0;
+  var effectObject = {
+    id : id,//施加者id
+    name : selfPlayer['name'],//施加者名稱
+    team :selfPlayer['team'],//施加者隊伍
+    x : playerlist[playerNeast]['x'],//效果施放位置x
+    y : playerlist[playerNeast]['y'],//效果施放位置y
+    effected :playerNeastID,//施加隊伍 or 人
+    distance:100,//(施放距離)
+    type :3,//效果(1傷害加乘 2移動速度加乘)
+    level :30,//強度
+    time :1,//系統計時用
+    maintime :2,//維持時間(ms)
+  }
+  effectDataSend(effectObject);
+  var effectObject = {
+    id : id,//施加者id
+    name : selfPlayer['name'],//施加者名稱
+    team :selfPlayer['team'],//施加者隊伍
+    x : selfPlayer['x']+30,//效果施放位置x
+    y : selfPlayer['y']+70,//效果施放位置y
+    effected :id,//施加隊伍 or 人
+    distance:100,//(施放距離)
+    type :1,//效果(1傷害加乘 2移動速度加乘)
+    level :1.5,//強度
+    time :0,//系統計時用
+    maintime :2000,//維持時間(ms)
+  }
+  effectDataSend(effectObject);
+  var effectObject = {
+    id : id,//施加者id
+    name : selfPlayer['name'],//施加者名稱
+    team :selfPlayer['team'],//施加者隊伍
+    x : selfPlayer['x']+30,//效果施放位置x
+    y : selfPlayer['y']+70,//效果施放位置y
+    effected :id,//施加隊伍 or 人
+    distance:480,//(施放距離)
+    type :2,//效果(1傷害加乘 2移動速度加乘)
+    level :0.5,//強度
+    time :0,//系統計時用
+    maintime :2000,//維持時間(ms)
+  }
+  effectDataSend(effectObject);
 }
 function building1Down(){
   animationMainTime = 0;
@@ -310,4 +456,13 @@ function building5Down(){
     team :selfPlayer['team']
   }
   buildingDataSend(buildObject);
+}
+
+function buildingTest() {
+  for (let [index,build] of Object.entries(buildinglist)) {
+    if(Math.pow(build['x']-55-selfPlayer['x'], 2) + Math.pow(build['y']-64-selfPlayer['y'], 2) < 15000){
+      return true;
+    }
+  }
+  return false;
 }

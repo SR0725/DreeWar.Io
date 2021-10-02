@@ -35,9 +35,6 @@
       </div>
     </div>
   </div>
-
-
-
   <div class="fixed-top">
     <div align="right">
       <button onclick="javascript:this.style.display='none'" id="talkroomOpen"  style="display: none;" class="btn btn-dark btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#chat_box_collapse" aria-expanded="false" aria-controls="chat_box_collapse">
@@ -110,15 +107,27 @@
                     </label>
                   </div>
                   <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" value="" id="displayWithoutLagCheck">
-                    <label class="form-check-label" for="displayWithoutLagCheck">
-                      顯示即時玩家訊息(默認設定上系統會特殊處理玩家資料使您的遊戲更加流暢 如網路環境差請勿勾選)
-                    </label>
-                  </div>
-                  <div class="form-check form-switch">
                     <input class="form-check-input" type="checkbox" value="" id="displayBuildingHpCheck" checked>
                     <label class="form-check-label" for="displayBuildingHpCheck">
                       顯示建築血量條
+                    </label>
+                  </div>
+                  <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" value="" id="displayBuildingMistCheck" checked>
+                    <label class="form-check-label" for="displayBuildingMistCheck">
+                      顯示建築迷霧(遠方的建築不會被顯示)
+                    </label>
+                  </div>
+                  <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" value="" id="displayMouseCircleWithoutDelayCheck">
+                    <label class="form-check-label" for="displayMouseCircleWithoutDelayCheck">
+                      滑鼠旋轉粒子特效移動動畫
+                    </label>
+                  </div>
+                  <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" value="" id="displayWithoutLagCheck">
+                    <label class="form-check-label" for="displayWithoutLagCheck">
+                      顯示即時玩家訊息(默認設定上系統會特殊處理玩家資料使您的遊戲更加流暢 如網路環境差請勿勾選)
                     </label>
                   </div>
                 </div>
@@ -174,13 +183,20 @@
   </div>
   <canvas id="obs_map" width="4230" height="1650" style="display: none;"></canvas>
   <div style="display:none">
+    <!--場景設定-->
     <img src="views/img/obs.png" id="obs">
     <img src="views/img/scence.png" id="scence">
+    <!--背景-->
     <img src="views/img/blue_desert.png" id="blue_desert">
+    <!--裝飾物-->
     <img src="views/img/waveWater.png" id="waveWater">
 
+    <!--粒子-->
     <img src="views/img/fireball.png" id="fireball">
+    <img src="views/img/brickBrown.png" id="brickBrown">
+    <img src="views/img/brickGrey.png" id="brickGrey">
 
+    <!--玩家動畫-->
     <img src="views/img/Blue/alienBlue_front.png" id="alienBlue_front">
     <img src="views/img/Blue/alienBlue_walk1.png" id="alienBlue_walk1">
     <img src="views/img/Blue/alienBlue_walk2.png" id="alienBlue_walk2">
@@ -191,45 +207,37 @@
     <img src="views/img/Pink/alienPink_walk2.png" id="alienPink_walk2">
     <img src="views/img/Pink/alienPink_duck.png" id="alienPink_duck">
 
+    <!--爆炸動畫-->
+    <div>
+      <img src="views/img/particle/explosion_1.png" id="explosion_0">
+      <img src="views/img/particle/explosion_1.png" id="explosion_1">
+      <img src="views/img/particle/explosion_2.png" id="explosion_2">
+      <img src="views/img/particle/explosion_3.png" id="explosion_3">
+      <img src="views/img/particle/explosion_4.png" id="explosion_4">
+      <img src="views/img/particle/explosion_5.png" id="explosion_5">
+      <img src="views/img/particle/explosion_6.png" id="explosion_6">
+    </div>
+
+    <!--狀態效果-->
     <img src="views/img/effect/1.png" id="effect1">
     <img src="views/img/effect/2.png" id="effect2">
 
-    <img src="views/img/hudJewel_yellow.png" id="mp_heart">
+    <!--UI-->
     <img src="views/img/hp.png" id="hp">
     <img src="views/img/hp_e.png" id="hp_e">
     <img src="views/img/mp.png" id="mp">
     <img src="views/img/mp_e.png" id="mp_e">
-    <img src="views/img/bp.png" id="bp">
-    <img src="views/img/bp_e.png" id="bp_e">
-    <img src="views/img/mpUI_e.png" id="mpUI_e">
-    <img src="views/img/mpUI.png" id="mpUI">
+    <img src="views/img/bp_s.png" id="bp_s">
+    <img src="views/img/mp_s.png" id="mp_s">
+    <img src="views/img/hp_s.png" id="hp_s">
+    <img src="views/img/UI/Bar.png" id="Bar">
+    <img src="views/img/UI/bp0.png" id="bp0">
+    <img src="views/img/UI/bp1.png" id="bp1">
+    <img src="views/img/UI/bp2.png" id="bp2">
+    <img src="views/img/UI/bp3.png" id="bp3">
+    <img src="views/img/UI/hp.png" id="hp_bg">
 
-    <img src="views/img/particle/explosion_1.png" id="explosion_1">
-    <img src="views/img/particle/explosion_2.png" id="explosion_2">
-    <img src="views/img/particle/explosion_3.png" id="explosion_3">
-    <img src="views/img/particle/explosion_4.png" id="explosion_4">
-    <img src="views/img/particle/explosion_5.png" id="explosion_5">
-    <img src="views/img/particle/explosion_6.png" id="explosion_6">
-    <img src="views/img/particle/explosion_7.png" id="explosion_7">
-    <img src="views/img/particle/explosion_8.png" id="explosion_8">
-    <img src="views/img/particle/explosion_9.png" id="explosion_9">
-    <img src="views/img/particle/explosion_10.png" id="explosion_10">
-    <img src="views/img/particle/explosion_11.png" id="explosion_11">
-    <img src="views/img/particle/explosion_12.png" id="explosion_12">
-    <img src="views/img/particle/explosion_13.png" id="explosion_13">
-    <img src="views/img/particle/explosion_14.png" id="explosion_14">
-    <img src="views/img/particle/explosion_15.png" id="explosion_15">
-    <img src="views/img/particle/explosion_16.png" id="explosion_16">
-    <img src="views/img/particle/explosion_17.png" id="explosion_17">
-    <img src="views/img/particle/explosion_18.png" id="explosion_18">
-    <img src="views/img/particle/explosion_19.png" id="explosion_19">
-    <img src="views/img/particle/explosion_20.png" id="explosion_20">
-    <img src="views/img/particle/explosion_21.png" id="explosion_21">
-    <img src="views/img/particle/explosion_22.png" id="explosion_22">
-    <img src="views/img/particle/explosion_23.png" id="explosion_23">
-    <img src="views/img/particle/explosion_24.png" id="explosion_24">
-    <img src="views/img/particle/explosion_25.png" id="explosion_25">
-
+    <!--技能施放-->
     <img src="views/img/skill/s0.png" id="s0_icon">
     <img src="views/img/skill/1_s1.png" id="1_s1_icon">
     <img src="views/img/skill/1_s2.png" id="1_s2_icon">
@@ -240,6 +248,7 @@
     <img src="views/img/skill/b_hptower.png" id="b_hptower">
     <img src="views/img/skill/b_wall.png" id="b_wall">
 
+    <!--建築-->
     <img src="views/img/build/beegen_blue.png" id="beegen_blue">
     <img src="views/img/build/beegen_red.png" id="beegen_red">
     <img src="views/img/build/flowergen_blue.png" id="flowergen_blue">
@@ -254,7 +263,8 @@
 
   </div>
   <script>
-    var id = Date.now().toString();//獲取前端ID
+    const PI = 3.1415926;
+    const id = Date.now().toString();//獲取前端ID
     var race = 1;//種族類別
     var msgBox = $('#msg');//聊天欄
     var socket = io();//取得socket包
@@ -273,12 +283,20 @@
     var skillObjectlist_Now = {};
     var skillObjectlist_buffer = {};
     var skillObjectlist_UT = 0;
+    var fps = 50;//FPSDisplayer
+    var fps_T = 50;//FPSDisplayer
+    var fps_T1 = 50;//FPSDisplayer
+    var fps_T2 = 50;//FPSDisplayer
+    var actionBarMSG;
+    var actionBarTime = -1;
     //set
-    var FramePerSencond = 50;//fps
+    var FramePerSencond = 50;//FPSset
     var cardUseMode = 0;
     var displayWave = true;
     var displayWithoutLag = false;
     var displayBuildingHp = true;
+    var displayBuildingMist = true;
+    var displayMouseCircleWithoutDelay = true;
     //
     var cardchoose = 0;
     var gamestat = 1;
@@ -299,6 +317,11 @@
     var mouse_x = 0.0;
     var mouse_y = 0.0;
     var PlayerCount;
+    var Tracing = false;
+    var TracingOs = 0;
+    var TracingObmx = 0;
+    var TracingObmy = 0;
+    var respawnTime = 0;
     var selfPlayer = {
       id : id,
       name : '訪客',
@@ -329,7 +352,5 @@
   <script src="scripts/jqueryrotate.js"></script>
   <script src="scripts/Carduse.js"></script>
   <script src="scripts/jquery-ui/jquery-ui.js"></script>
-  <script src="https://github.com/mrdoob/three.js/blob/master/examples/jsm/WebGL.js"></script>
-  <script src="https://threejs.org/build/three.js"></script>
 </body>
 </html>

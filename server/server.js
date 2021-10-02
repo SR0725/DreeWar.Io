@@ -65,7 +65,7 @@ io.on('connection', (socket) => {
           motion_x : 0.0,
           motion_y : 0.0,
           flip : false,
-          speed : 12,
+          speed : 6,
           damage:20,
           animation : 0
         };
@@ -127,38 +127,61 @@ io.on('connection', (socket) => {
           playerlist[socket.id].flip = data.flip;
         }
       } catch (e) {
-        console.log('有些錯誤在playerDataGet階段發生了!詳細訊息:'+e);
       }
     });
     /*魔力使用*/
     socket.on("mpUse", (msg) => {
+      try {
         playerlist[socket.id]['mp'] -= msg.mpuse;
+      } catch (e) {
+
+      }
     });
     /*蜂蜜使用*/
     socket.on("bpUse", (msg) => {
+      try {
         playerlist[socket.id]['bp'] -= msg.bpuse;
+      } catch (e) {
+
+      }
     });
     /*獲取技能資料*/
     socket.on("skillDataGet", (msg) => {
+      try {
         skillObject[skillindex] = msg;
         skillindex += 1;
+      } catch (e) {
+
+      }
     });
     /*獲取粒子效果資料*/
     socket.on("particleDataGet", (msg) => {
+      try {
         io.to('GameRoom').emit("particleDataGet",msg);
+      } catch (e) {
+
+      }
     });
     /*獲取藥水資料*/
     socket.on("effectDataGet", (msg) => {
+      try {
         effectlist[effectindex] = msg;
         effectindex += 1;
+      } catch (e) {
+
+      }
     });
     /*獲取建築資料*/
     socket.on("buildingDataGet", (msg) => {
+      try {
         buildinglist[buildingindex] = msg;
         io.to('GameRoom').emit("buildDataGet",msg,buildingindex);
         if(msg.type == 1) beegen_count[msg.team] += 1;
         if(msg.type == 4) flowergen_count[msg.team] += 1;
         buildingindex += 1;
+      } catch (e) {
+
+      }
     });
     /*獲取玩家聊天文字資料*/
     socket.on("send", (msg) => {
@@ -178,7 +201,6 @@ io.on('connection', (socket) => {
         delete playerlist[socket.id];
         io.emit("playerDataUpdata", playerlist);
       } catch (e) {
-        console.log('有些錯誤在disconnect階段發生了!詳細訊息:'+e);
       }
     });
 });
@@ -190,7 +212,7 @@ function colliderBoxCircle(x1,y1,lx1,ly1,x2,y2,r){
 function dataDeal_Player(){
   for (let [id ,player] of Object.entries(playerlist)) {
     player['damage'] = 20;
-    player['speed'] = 12;
+    player['speed'] = 6;
     if(player['team'] == 1){
       if(mp1getTick > 10000*(Math.pow(0.9,flowergen_count[1]))){
         if(player['mp'] < 10){
@@ -264,10 +286,11 @@ function dataDeal_Skill() {
               if(player['team'] != object['team']){
                 if(colliderBoxCircle(player['x'],player['y'],64,128,object['x'],object['y'],20)){
                   player['health'] -= object['damage'];
-                  io.to('GameRoom').emit("particleDataGet",{particle:1,time:1,maintime:500,x:object['x'],y:object['y']});
+                  io.to('GameRoom').emit("particleDataGet",{particle:1,time:1,maintime:300,x:object['x'],y:object['y']});
                   io.to(id).emit("hurt");
                   if(player['health'] <= 0){
                     io.to(id).emit("die");
+                    io.to('GameRoom').emit("msg", {message: player['name']+'被'+object['name']+'的火焰貫穿了!',name: '世界之聲',});
                     player['health'] = 100;
                   }
                   delete skillObject[index];
@@ -278,11 +301,12 @@ function dataDeal_Skill() {
               if(player['id'] != object['id']){
                 if(colliderBoxCircle(player['x'],player['y'],64,128,object['x'],object['y'],20)){
                   player['health'] -= object['damage'];
-                  io.to('GameRoom').emit("particleDataGet",{particle:1,time:1,maintime:500,x:object['x'],y:object['y']});
+                  io.to('GameRoom').emit("particleDataGet",{particle:1,time:1,maintime:300,x:object['x'],y:object['y']});
                   io.to(id).emit("hurt");
                   if(player['health'] <= 0){
                     io.to(id).emit("die");
                     player['health'] = 100;
+                    io.to('GameRoom').emit("msg", {message: player['name']+'在'+object['name']+'引起的爆炸中死去!',name: '世界之聲',});
                   }
                   delete skillObject[index];
                   break;
@@ -294,10 +318,89 @@ function dataDeal_Skill() {
             if((build['type'] == 2 || build['type'] == 5) || ((build['type'] == 1 || build['type'] == 3  || build['type'] == 4) && build['team'] != object['team'])){
               if(Math.pow((build['x']-object['x']),2)+Math.pow((build['y']-object['y']),2)<4096){
                 build['health'] -= object['damage'];
-                io.to('GameRoom').emit("particleDataGet",{particle:1,time:1,maintime:500,x:object['x'],y:object['y']});
+                io.to('GameRoom').emit("particleDataGet",{particle:1,time:1,maintime:300,x:object['x'],y:object['y']});
                 io.to("GameRoom").emit("buildDataUpdata",build,bindex);
                 delete skillObject[index];
                 break;
+              }
+            }
+          }
+          break;
+        case 2:
+          if(object['race'] == 1){
+            if(gametick % 5 == 1)
+            io.to('GameRoom').emit("particleDataGet",{particle:3,time:1,maintime:500,x:object['x'],y:object['y']});
+            //碰撞運算
+            for (let [id ,player] of Object.entries(playerlist)) {
+              if(friendlyFire == false){
+                if(player['team'] != object['team']){
+                  if(colliderBoxCircle(player['x'],player['y'],64,128,object['x'],object['y'],20)){
+                    player['health'] -= object['damage'];
+                    io.to('GameRoom').emit("particleDataGet",{particle:1,time:1,maintime:300,x:object['x'],y:object['y']});
+                    io.to(id).emit("hurt");
+                    effectlist[effectindex] = {
+                      id : object['id'],//施加者id
+                      name : object['name'],//施加者名稱
+                      team :object['team'],//施加者隊伍
+                      x : object['x']+30,//效果施放位置x
+                      y : object['y']+70,//效果施放位置y
+                      effected :player['id'],//施加隊伍 or 人
+                      distance:100,//(施放距離)
+                      type :2,//效果(1傷害加乘 2移動速度加乘)
+                      level :0,//強度
+                      time :0,//系統計時用
+                      maintime :1500,//維持時間(ms)
+                    };
+                    effectindex += 1;
+                    if(player['health'] <= 0){
+                      io.to(id).emit("die");
+                      player['health'] = 100;
+                      io.to('GameRoom').emit("msg", {message: player['name']+'窒息於'+object['name']+'招喚的地殼裂痕中!',name: '世界之聲',});
+                    }
+                    delete skillObject[index];
+                    break;
+                  }
+                }
+              }else{
+                if(player['id'] != object['id']){
+                  if(colliderBoxCircle(player['x'],player['y'],64,128,object['x'],object['y'],20)){
+                    player['health'] -= object['damage'];
+                    io.to('GameRoom').emit("particleDataGet",{particle:1,time:1,maintime:300,x:object['x'],y:object['y']});
+                    io.to(id).emit("hurt");
+                    effectlist[effectindex] = {
+                      id : object['id'],//施加者id
+                      name : object['name'],//施加者名稱
+                      team :object['team'],//施加者隊伍
+                      x : object['x']+30,//效果施放位置x
+                      y : object['y']+70,//效果施放位置y
+                      effected :player['id'],//施加隊伍 or 人
+                      distance:100,//(施放距離)
+                      type :2,//效果(1傷害加乘 2移動速度加乘)
+                      level :0,//強度
+                      time :0,//系統計時用
+                      maintime :1500,//維持時間(ms)
+                    };
+                    effectindex += 1;
+                    if(player['health'] <= 0){
+                      io.to(id).emit("die");
+                      player['health'] = 100;
+                      io.to('GameRoom').emit("msg", {message: player['name']+'窒息於'+object['name']+'招喚的地殼裂痕中!',name: '世界之聲',});
+                    }
+                    delete skillObject[index];
+                    break;
+                  }
+                }
+              }
+            }
+            for (let [bindex, build] of Object.entries(buildinglist)){
+              if((build['type'] == 2 || build['type'] == 5) || ((build['type'] == 1 || build['type'] == 3  || build['type'] == 4) && build['team'] != object['team'])){
+                if(Math.pow((build['x']-object['x']),2)+Math.pow((build['y']-object['y']),2)<4096){
+                  build['health'] -= object['damage']*6;
+                  io.to('GameRoom').emit("particleDataGet",{particle:1,time:1,maintime:300,x:object['x'],y:object['y']});
+                  io.to("GameRoom").emit("buildDataUpdata",build,bindex);
+                  delete skillObject[index];
+                  break;
+                }
               }
             }
           }
@@ -326,6 +429,15 @@ function dataDeal_Effect() {
               case 2:
                 playerlist[id]['speed'] *= object['level'];
                 if(object['time'] == 0) io.to(id).emit("effectDataGet", {effect:2,time:0,maintime:object['maintime']});
+                break;
+              case 3:
+                player['health'] -= object['level'];
+                io.to(id).emit("hurt");
+                if(player['health'] <= 0){
+                  io.to(id).emit("die");
+                  player['health'] = 100;
+                  io.to('GameRoom').emit("msg", {message: player['name']+'被'+object['name']+'重擊致死!',name: '世界之聲',});
+                }
                 break;
               default:
             }
@@ -621,6 +733,9 @@ app.get('/views/img/particle/:id', (req, res) => {
 });
 app.get('/views/img/build/:id', (req, res) => {
     res.sendFile( __dirname + '/views/img/build/'+req.params.id);
+});
+app.get('/views/img/UI/:id', (req, res) => {
+    res.sendFile( __dirname + '/views/img/UI/'+req.params.id);
 });
 server.listen(3000, () => {
     console.log("Server Started. http://localhost:3000");

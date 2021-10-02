@@ -32,12 +32,15 @@ function gameStart() {
   //繪製畫面前置作業
   canvas = document.getElementById("Game_Bg");
   ctx = canvas.getContext("2d");
+
   //繪製碰撞圖
   obstx.drawImage(obsimg, 0, 0,4230,1650);
   //初始化各功能
   gamestat = 2;
   skillCardInit();
-  gameMouseInput();
+  setTimeout(function(){
+    gameMouseInput();
+  },500);
   Update();
   draw();
 }
@@ -46,8 +49,8 @@ function smoothData(classN){
   if(classN == 0){//平滑化玩家資料
     for (let [index,player] of Object.entries(playerlist)) {
       if(player['id'] != id && player['id'] != 'tick'){
-        playerlist_Now[index]['motion_x'] = (player['x']-playerlist_Now[index]['x'])/(ping_player/20.0);
-        playerlist_Now[index]['motion_y'] = (player['y']-playerlist_Now[index]['y'])/(ping_player/20.0);
+        playerlist_Now[index]['motion_x'] = (player['x']+playerlist_Now[index]['motion_x']*playerlist_UT-playerlist_Now[index]['x'])/(ping_player/20.0);
+        playerlist_Now[index]['motion_y'] = (player['y']+playerlist_Now[index]['motion_y']*playerlist_UT-playerlist_Now[index]['y'])/(ping_player/20.0);
         break;
       }
     }
@@ -73,6 +76,10 @@ function colliderSenceTest(x,y){
     return 1.0;
   }
 }//場景互動測試
+
+function colliderBoxCircle(x1,y1,lx1,ly1,x2,y2,r){
+  return (Math.pow((x1+0.5*lx1)-x2,2)+Math.pow((y1+30+0.5*ly1)-y2,2) <= Math.pow((r+32),2))?true:false
+}//碰撞測試,語法:(物件1的X座標,物件1的Y座標,物件1的X長度,物件1的Y長度,物件2的X座標,物件2的Y座標,物件2的半徑)
 
 function selfPysicalCal(){
   //wsad移動計算動畫與動量
@@ -133,12 +140,25 @@ function selfPysicalCal(){
     }
   }
   //碰撞與物理計算
-  if(colliderSenceTest(selfPlayer['x'],selfPlayer['y']) == 0){
-    selfPlayer['x'] += selfPlayer['motion_x'];
-    selfPlayer['y'] += selfPlayer['motion_y'];
-  }else{
-    selfPlayer['x'] += selfPlayer['motion_x']*colliderSenceTest(selfPlayer['x'] + selfPlayer['motion_x'],selfPlayer['y']);
-    selfPlayer['y'] += selfPlayer['motion_y']*colliderSenceTest(selfPlayer['x'],selfPlayer['y'] + selfPlayer['motion_y']);
+  if(Tracing == false){
+    if(colliderSenceTest(selfPlayer['x'],selfPlayer['y']) == 0){
+      selfPlayer['x'] += selfPlayer['motion_x'];
+      selfPlayer['y'] += selfPlayer['motion_y'];
+    }else{
+      selfPlayer['x'] += selfPlayer['motion_x']*colliderSenceTest(selfPlayer['x'] + selfPlayer['motion_x'],selfPlayer['y']);
+      selfPlayer['y'] += selfPlayer['motion_y']*colliderSenceTest(selfPlayer['x'],selfPlayer['y'] + selfPlayer['motion_y']);
+    }
+  }else {
+    tracing();
+  }
+}
+
+function tracing() {
+  selfPlayer['x'] += TracingObmx;
+  selfPlayer['y'] += TracingObmy;
+  TracingOs += 1;
+  if(TracingOs >= 40){
+    Tracing = false;
   }
 }
 
@@ -175,8 +195,21 @@ function Update() {
     canvas.width = window.innerWidth;
     Window_width = window.innerWidth;
   }
-  //自己位置的物理運算
-  selfPysicalCal();
+  if(respawnTime <= 0){
+    //自己位置的物理運算
+    selfPysicalCal();
+  }else{
+    respawnTime -= 1;
+    if(respawnTime == 0){
+      if(selfPlayer['team'] == 1){
+        selfPlayer['x'] = 30;
+        selfPlayer['y'] = 760;
+      }else if(selfPlayer['team'] == 2){
+        selfPlayer['x'] = 3987;
+        selfPlayer['y'] = 760;
+      }
+    }
+  }
   //獲取個人資料
   for (let [index,player] of Object.entries(playerlist_buffer)) {
 		if(player['id'] == id){
@@ -191,6 +224,7 @@ function Update() {
   }
   animationTime += 1; if(animationTime > 300) animationTime = 0;
   playerlist_UT += 1;
+  if(actionBarTime >= 0) actionBarTime -= 1;
   //上傳資料
   playerDataSend();
   setTimeout('Update()',20);

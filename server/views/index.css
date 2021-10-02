@@ -34,9 +34,9 @@ canvas { background: #3C3C3C; display: block; margin: 0 auto; }
 
 .z-index10{z-index: 10;}
 .magiccard{overflow:hidden;}
-.magiccard img{transform:translate(0px,80px)scale(1.0,1.0);transition: all 0.2s ease-out;z-index: 0;}
-.magiccard img:hover{transform:translate(40px,-70px)scale(1.8,1.8);z-index: 10;}
-.magiccard {overflow:visible;width: 8rem;}
+.magiccard img{transform:translate(0px,0px)scale(1.0,1.0);transition: all 0.2s ease-out;z-index: 0;}
+.magiccard img:hover{transform:translate(150px,-200px)scale(4.0,4.0);z-index: 10;}
+.magiccard {overflow:visible;width: 6rem;}
 
 .card0{
   animation: cardFrames linear 0.5s;

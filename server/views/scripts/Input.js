@@ -187,7 +187,22 @@ $('#displayBuildingHpCheck').on('change', function () {
     displayBuildingHp = false;
   }
 })
-
+$('#displayBuildingMistCheck').on('change', function () {
+  if ($('#displayBuildingMistCheck').prop('checked')) {
+    displayBuildingMist = true;
+  }
+  else{
+    displayBuildingMist = false;
+  }
+})
+$('#displayMouseCircleWithoutDelayCheck').on('change', function () {
+  if ($('#displayMouseCircleWithoutDelayCheck').prop('checked')) {
+    displayMouseCircleWithoutDelay = false;
+  }
+  else{
+    displayMouseCircleWithoutDelay = true;
+  }
+})
 
 /*手機介面操控*/
 function up(){

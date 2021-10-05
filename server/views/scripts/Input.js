@@ -154,14 +154,17 @@ function gameMouseInput(){
 }
 $('#CardUseMode_0').change(function () {
     cardUseMode = 0;
+    musicPlay('Music_switch',UIVolume);
 })
 
 $('#CardUseMode_1').change(function () {
     cardUseMode = 1;
+    musicPlay('Music_switch',UIVolume);
 })
 $("#fpsRange").change(function(){
   document.getElementById("fpsValue").innerHTML = $(this).val();
   FramePerSencond = $(this).val();
+  musicPlay('Music_mouserelease',UIVolume);
 });
 $('#displayWaveCheck').on('change', function () {
   if ($('#displayWaveCheck').prop('checked')) {
@@ -170,6 +173,7 @@ $('#displayWaveCheck').on('change', function () {
   else{
     displayWave = false;
   }
+  musicPlay('Music_rollover',UIVolume);
 })
 $('#displayWithoutLagCheck').on('change', function () {
   if ($('#displayWithoutLagCheck').prop('checked')) {
@@ -178,6 +182,7 @@ $('#displayWithoutLagCheck').on('change', function () {
   else{
     displayWithoutLag = false;
   }
+  musicPlay('Music_rollover',UIVolume);
 })
 $('#displayBuildingHpCheck').on('change', function () {
   if ($('#displayBuildingHpCheck').prop('checked')) {
@@ -186,6 +191,7 @@ $('#displayBuildingHpCheck').on('change', function () {
   else{
     displayBuildingHp = false;
   }
+  musicPlay('Music_rollover',UIVolume);
 })
 $('#displayBuildingMistCheck').on('change', function () {
   if ($('#displayBuildingMistCheck').prop('checked')) {
@@ -194,6 +200,7 @@ $('#displayBuildingMistCheck').on('change', function () {
   else{
     displayBuildingMist = false;
   }
+  musicPlay('Music_rollover',UIVolume);
 })
 $('#displayMouseCircleWithoutDelayCheck').on('change', function () {
   if ($('#displayMouseCircleWithoutDelayCheck').prop('checked')) {
@@ -202,7 +209,56 @@ $('#displayMouseCircleWithoutDelayCheck').on('change', function () {
   else{
     displayMouseCircleWithoutDelay = true;
   }
+  musicPlay('Music_rollover',UIVolume);
 })
+
+$("#MainVolumeRange").change(function(){
+  document.getElementById("MainVolumeValue").innerHTML = $(this).val();
+  MainVolume = $(this).val()/100;
+  musicPlay('Music_mouserelease',UIVolume);
+});
+
+$("#BGMVolumeRange").change(function(){
+  document.getElementById("BGMVolumeValue").innerHTML = $(this).val();
+  BGMVolume = $(this).val()/100;
+  musicPlay('Music_mouserelease',UIVolume);
+});
+
+$("#ShootVolumeRange").change(function(){
+  document.getElementById("ShootVolumeValue").innerHTML = $(this).val();
+  ShootVolume = $(this).val()/100;
+  musicPlay('Music_mouserelease',UIVolume);
+});
+
+$("#UIVolumeRange").change(function(){
+  document.getElementById("UIVolumeValue").innerHTML = $(this).val();
+  UIVolume = $(this).val()/100;
+  musicPlay('Music_mouserelease',UIVolume);
+});
+
+$("#HumanVolumeRange").change(function(){
+  document.getElementById("HumanVolumeValue").innerHTML = $(this).val();
+  UIVolume = $(this).val()/100;
+  musicPlay('Music_mouserelease',UIVolume);
+});
+
+$("#BoomVolumeRange").change(function(){
+  document.getElementById("BoomVolumeValue").innerHTML = $(this).val();
+  BoomVolume = $(this).val()/100;
+  musicPlay('Music_mouserelease',UIVolume);
+});
+
+$("#FootVolumeRange").change(function(){
+  document.getElementById("FootVolumeValue").innerHTML = $(this).val();
+  FootVolume = $(this).val()/100;
+  musicPlay('Music_mouserelease',UIVolume);
+});
+
+$("#BuildVolumeRange").change(function(){
+  document.getElementById("BuildVolumeValue").innerHTML = $(this).val();
+  BuildVolume = $(this).val()/100;
+  musicPlay('Music_mouserelease',UIVolume);
+});
 
 /*手機介面操控*/
 function up(){

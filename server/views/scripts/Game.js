@@ -28,7 +28,7 @@ function gameStart() {
   //顯示變更
   document.getElementById("chat_box_collapse").className = "collapse collapse-horizontal";
   document.getElementById('talkroomOpen').style.display='block';
-  document.getElementById("MainSence").innerHTML = '<canvas id="Game_Bg" width="'+Window_width+'" height="'+Window_height+'"></canvas>';
+  document.getElementById("MainSence").innerHTML = '<canvas id="Game_Bg" width="'+Window_width+'" height="'+Window_height+'" style="cursor: none;"></canvas>';
   //繪製畫面前置作業
   canvas = document.getElementById("Game_Bg");
   ctx = canvas.getContext("2d");
@@ -43,6 +43,7 @@ function gameStart() {
   },500);
   Update();
   draw();
+  musicPlay('begin',HumanVolume)
 }
 
 function smoothData(classN){
@@ -81,28 +82,37 @@ function colliderBoxCircle(x1,y1,lx1,ly1,x2,y2,r){
   return (Math.pow((x1+0.5*lx1)-x2,2)+Math.pow((y1+30+0.5*ly1)-y2,2) <= Math.pow((r+32),2))?true:false
 }//碰撞測試,語法:(物件1的X座標,物件1的Y座標,物件1的X長度,物件1的Y長度,物件2的X座標,物件2的Y座標,物件2的半徑)
 
+function footStepSound() {
+  if(animationTime % 15 == 1)
+    musicPlay('footstep_'+Math.floor(Math.random()*9.999),FootVolume);
+}
+
 function selfPysicalCal(){
   //wsad移動計算動畫與動量
   if(key_s ==  true && key_w == false){
+    footStepSound();
     if(selfPlayer['motion_y'] <= selfPlayer['speed']){
-      selfPlayer['motion_y'] += 0.8;
+      selfPlayer['motion_y'] += 1.6;
       if(selfPlayer['animation'] == 0) selfPlayer['animation'] = 1;
     }
   }else if(key_s == false && key_w == true){
+    footStepSound();
     if((-1*selfPlayer['motion_y']) <= selfPlayer['speed']){
-      selfPlayer['motion_y'] -= 0.8;
+      selfPlayer['motion_y'] -= 1.6;
       if(selfPlayer['animation'] == 0) selfPlayer['animation'] = 1;
     }
   }
   if(key_d == true && key_a == false){
+    footStepSound();
     if((selfPlayer['motion_x']) <= selfPlayer['speed']){
-      selfPlayer['motion_x'] += 0.8;
+      selfPlayer['motion_x'] += 1.6;
       selfPlayer['flip'] = false;
       if(selfPlayer['animation'] == 0) selfPlayer['animation'] = 1;
     }
   }else if(key_d == false && key_a == true){
+    footStepSound();
     if((-1*selfPlayer['motion_x']) <= selfPlayer['speed']){
-      selfPlayer['motion_x'] -= 0.8;
+      selfPlayer['motion_x'] -= 1.6;
       selfPlayer['flip'] = true;
       if(selfPlayer['animation'] == 0) selfPlayer['animation'] = 1;
     }
@@ -147,6 +157,7 @@ function selfPysicalCal(){
     }else{
       selfPlayer['x'] += selfPlayer['motion_x']*colliderSenceTest(selfPlayer['x'] + selfPlayer['motion_x'],selfPlayer['y']);
       selfPlayer['y'] += selfPlayer['motion_y']*colliderSenceTest(selfPlayer['x'],selfPlayer['y'] + selfPlayer['motion_y']);
+
     }
   }else {
     tracing();

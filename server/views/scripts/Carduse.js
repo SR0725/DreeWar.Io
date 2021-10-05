@@ -237,6 +237,7 @@ function cardDisplayChange(){
 }
 
 function skill0Down(){
+  musicPlay('fireball_shoot',ShootVolume);
   var skillspeed = 32.0;
   var motion_x = mouse_x-(Window_width/2);
   var motion_y = mouse_y-(Window_height/2);
@@ -265,6 +266,7 @@ function skill0Down(){
 }
 
 function skill1_1Down(){
+  musicPlay('tie_breaker',ShootVolume);
 
   selfPlayer['animation'] = 2;
   selfPlayer['motion_x'] = 0;
@@ -302,6 +304,7 @@ function skill1_1Down(){
   effectDataSend(effectObject);
 }
 function skill1_2Down(){
+  musicPlay('time',ShootVolume);
   var skillspeed = 12.0;
   var motion_x = mouse_x-(Window_width/2);
   var motion_y = mouse_y-(Window_height/2);
@@ -329,6 +332,7 @@ function skill1_2Down(){
   skillDataSend(SkillObject);
 }
 function skill1_3Down(){
+  musicPlay('prepare_yourself',ShootVolume);
   selfPlayer['animation'] = 2;
   //尋找最近敵人
   var finded = false;
@@ -402,6 +406,7 @@ function skill1_3Down(){
   effectDataSend(effectObject);
 }
 function building1Down(){
+  musicPlay('building',BuildVolume);
   animationMainTime = 0;
   var buildObject = {
     name : selfPlayer['name'],
@@ -414,6 +419,7 @@ function building1Down(){
   buildingDataSend(buildObject);
 }
 function building2Down(){
+  musicPlay('building',BuildVolume);
   var buildObject = {
     name : selfPlayer['name'],
     x : selfPlayer['x']+32,
@@ -425,6 +431,7 @@ function building2Down(){
   buildingDataSend(buildObject);
 }
 function building3Down(){
+  musicPlay('building',BuildVolume);
   var buildObject = {
     name : selfPlayer['name'],
     x : selfPlayer['x']+32,
@@ -436,6 +443,7 @@ function building3Down(){
   buildingDataSend(buildObject);
 }
 function building4Down(){
+  musicPlay('building',BuildVolume);
   var buildObject = {
     name : selfPlayer['name'],
     x : selfPlayer['x']+32,
@@ -447,6 +455,7 @@ function building4Down(){
   buildingDataSend(buildObject);
 }
 function building5Down(){
+  musicPlay('building',BuildVolume);
   var buildObject = {
     name : selfPlayer['name'],
     x : selfPlayer['x']+32,

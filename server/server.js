@@ -737,6 +737,12 @@ app.get('/views/img/build/:id', (req, res) => {
 app.get('/views/img/UI/:id', (req, res) => {
     res.sendFile( __dirname + '/views/img/UI/'+req.params.id);
 });
+app.get('/views/audio/button/:id', (req, res) => {
+    res.sendFile( __dirname + '/views/audio/button/'+req.params.id);
+});
+app.get('/views/audio/game/:id', (req, res) => {
+    res.sendFile( __dirname + '/views/audio/game/'+req.params.id);
+});
 server.listen(3000, () => {
     console.log("Server Started. http://localhost:3000");
 });

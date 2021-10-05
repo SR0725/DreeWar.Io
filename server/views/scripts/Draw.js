@@ -29,6 +29,10 @@ function BuildVisibleTest(x1,y1,x2,y2) {
   }
 }
 
+function distanceCount(x1,y1,x2,y2){
+  return Math.sqrt(Math.pow(x2-x1,2)+Math.pow(y2-y1,2))
+}
+
 function VisibleTest(x1,y1,x2,y2) {
   var distance = Math.pow((x1-x2),2)+Math.pow((y1-y2),2);
   if(distance < 360000){
@@ -104,6 +108,32 @@ function draw() {
   mouseCircle();
   setTimeout('draw()',(1000/FramePerSencond));
 }
+
+/*
+function shaderDraw(){
+  var GameScreen = document.getElementById('Game_Bg');
+  dataUrl = GameScreen.toDataURL();
+  imageFoo = document.createElement('img');
+  imageFoo.src = dataUrl;
+  imageFoo.onload = onload;
+
+  const gpu = new GPU();
+  const kernel = gpu.createKernel(function(imageFoo,lx,ly) {
+    const pixel = imageFoo[this.thread.z][this.thread.y][this.thread.x];
+    var distance = (this.thread.x-0.5*lx)*(this.thread.x-0.5*lx) + (this.thread.y-0.5*ly)*(this.thread.y-0.5*ly);
+    if(distance > 800*800)
+      this.color(0, 0, 0, pixel[3]);
+    else
+      this.color(pixel[0], pixel[1], pixel[2], pixel[3]);
+
+  }).setGraphical(true).setOutput([100, 100]);
+
+  imageFoo.onload = () => {
+    kernel(imageFoo,Window_width, Window_height);
+    document.getElementById("MainSence").innerHTML = "";
+    document.getElementById("MainSence").appendChild(kernel.canvas);
+  };
+}*/
 
 function TerrainDraw(){
     var img = document.getElementById('scence');
@@ -350,10 +380,10 @@ function UI_bp_mpDisplay(){
   var img = document.getElementById('bp'+selfPlayer['bp']);
   ctx.drawImage(img,temp_x,temp_y,250,194);
   //hp
-  temp_x = Window_width-150;
-  temp_y = Window_height-135;
+  temp_x = Window_width-143;
+  temp_y = Window_height-121;
   var img = document.getElementById('hp_s');
-  ctx.drawImage(img,0,0,95,86*(selfPlayer['health']/100),temp_x,temp_y,156,137*(selfPlayer['health']/100));
+  ctx.drawImage(img,0,86,95,-86*(selfPlayer['health']/100),temp_x,temp_y+(123-123*(selfPlayer['health']/100)),142,123*(selfPlayer['health']/100));
 }
 
 function UI_pingAndFPSDisplay(){
@@ -400,6 +430,12 @@ function particleDisplay() {
         case 1:
           var img = document.getElementById('explosion_'+Math.floor(particle['time']/50));
           ctx.drawImage(img, particle['x'] - selfPlayer['x'] + (Window_width/2)-180,particle['y'] - selfPlayer['y'] + (Window_height/2)-180,196*2,196*2);
+          if(particle['time'] == 1){
+            distance = distanceCount(particle['x'],particle['y'],selfPlayer['x'],selfPlayer['y']);
+            if(distance < 800){
+              musicPlay('boom',BoomVolume*distance/800)
+            }
+          }
           break;
         case 2:
           var img1 = document.getElementById('brickBrown');
@@ -586,4 +622,11 @@ function mouseCircle() {
     ctx.fillStyle = mouseCircleColor+1*(1-(i/14))+")";
     ctx.fill();
   }
+}
+
+function musicPlay(music,volume) {
+  var audio = document.getElementById(music);
+  audio.currentTime = 0;
+  audio.volume = volume*MainVolume;
+  audio.play();
 }

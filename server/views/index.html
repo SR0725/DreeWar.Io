@@ -42,7 +42,7 @@
       </button>
       <div style="min-height: 120px;">
         <div class="collapse collapse-horizontal show" id="chat_box_collapse">
-          <div id="message-box"  class="w-25">
+          <div id="message-box"  style="width:25vw;">
             <div class="input-group" id="chat-box" style="z-index: 10;">
               <span class="input-group-text text-light bg-dark" id="basic-addon1">
                 <button onclick="javascript:document.getElementById('talkroomOpen').style.display='block'" class="btn-close btn-close-white" type="button" data-bs-toggle="collapse" data-bs-target="#chat_box_collapse" aria-expanded="false" aria-controls="chat_box_collapse">
@@ -57,88 +57,163 @@
       </div>
     </div>
   </div>
-  <div class="fixed-top" style="width:30vw;">
+  <div class="fixed-top" style="width:10vw;">
     <div align="left">
 
-      <button onclick="javascript:this.style.display='none'" id="setBoxOpen" class="btn btn-dark btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#set_box_collapse" aria-expanded="false" aria-controls="set_box_collapse">
+      <button type="button" class="btn btn-dark btn-sm" data-bs-toggle="modal" data-bs-target="#setBoxOpen">
         <span class="input-group-text text-light bg-dark" id="basic-addon1"><i class="fas fa-cog"></i></span>
       </button>
-      <div style="min-height: 120px;">
-        <div class="collapse collapse-horizontal" id="set_box_collapse">
-          <div id="set-box">
+    </div>
+  </div>
+
+  <!-- Setting -->
+  <div style="width: 82vw;" class="modal fade" id="setBoxOpen" tabindex="-1" aria-labelledby="setBoxOpenLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content bg-dark" class="mx-auto" style="width: 55vw;">
+        <div id="set-box" class="mx-auto" style="width: 52vw;">
+          <div class="rounded text-light bg-dark" id="basic-addon1">
+            <hr>
             <span class="input-group-text text-light bg-dark" id="basic-addon1" style="width:50px;">
-              <button onclick="javascript:document.getElementById('setBoxOpen').style.display='block'" class="btn-close btn-close-white" type="button" data-bs-toggle="collapse" data-bs-target="#set_box_collapse" aria-expanded="false" aria-controls="set_box_collapse">
+              <button class="btn-close btn-close-white" type="button" data-bs-toggle="collapse" data-bs-dismiss="modal">
               </button>
             </span>
-            <div class="rounded text-light bg-dark" id="basic-addon1">
-              <hr>
-              <strong>卡牌施放模式</strong>
-              <div class="container">
-                <div class="row align-items-start">
-                  <div class="col form-check">
-                    <input class="form-check-input" type="radio" name="flexRadioDefault" id="CardUseMode_0" checked>
-                    <label class="form-check-label" for="flexRadioDefault2">
-                      QERF對應四個鍵位進行施放
-                    </label>
+            <hr>
+            <strong>卡牌施放模式</strong>
+            <div class="container">
+              <div class="row align-items-start">
+                <div class="col form-check">
+                  <input class="form-check-input" type="radio" name="flexRadioDefault" id="CardUseMode_0" checked>
+                  <label class="form-check-label" for="flexRadioDefault2">
+                    QERF對應四個鍵位進行施放
+                  </label>
+                </div>
+                <div class="col form-check">
+                  <input class="form-check-input" type="radio" name="flexRadioDefault" id="CardUseMode_1">
+                  <label class="form-check-label" for="flexRadioDefault1">
+                    QE更換施放卡牌 Space施放
+                  </label>
+                </div>
+              </div>
+            </div>
+            <hr>
+          </div>
+          <div class="rounded text-light bg-dark" id="basic-addon1">
+            <hr>
+            <strong>顯示設定</strong>
+            <div class="container">
+              <div class="row align-items-start">
+                <div class="form-check form-switch">
+                  <label for="fpsRange" class="form-label">FPS最大值設置:<label id="fpsValue">50</label></label>
+                  <input type="range" class="form-range" min="10" max="150" id="fpsRange" value="50">
+                </div>
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" value="" id="displayWaveCheck" checked>
+                  <label class="form-check-label" for="displayWaveCheck">
+                    是否顯示波浪
+                  </label>
+                </div>
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" value="" id="displayBuildingHpCheck" checked>
+                  <label class="form-check-label" for="displayBuildingHpCheck">
+                    顯示建築血量條
+                  </label>
+                </div>
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" value="" id="displayBuildingMistCheck" checked>
+                  <label class="form-check-label" for="displayBuildingMistCheck">
+                    顯示建築迷霧(遠方的建築不會被顯示)
+                  </label>
+                </div>
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" value="" id="displayMouseCircleWithoutDelayCheck">
+                  <label class="form-check-label" for="displayMouseCircleWithoutDelayCheck">
+                    滑鼠旋轉粒子特效移動動畫
+                  </label>
+                </div>
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" value="" id="displayWithoutLagCheck">
+                  <label class="form-check-label" for="displayWithoutLagCheck">
+                    顯示即時玩家訊息(默認設定上系統會特殊處理玩家資料使您的遊戲更加流暢 如網路環境差請勿勾選)
+                  </label>
+                </div>
+              </div>
+            </div>
+            <hr>
+          </div>
+          <div class="rounded text-light bg-dark" id="basic-addon1">
+            <hr>
+            <strong>音效設定</strong>
+            <div class="container">
+              <div class="row align-items-start">
+                <div class="form-check form-switch">
+                  <label for="MainVolumeRange" class="form-label">主音量<label id="MainVolumeValue">40</label></label>
+                  <input type="range" class="form-range" min="0" max="100" id="MainVolumeRange" value="40">
+                </div>
+                <div class="row justify-content-center">
+                  <div class="col-6">
+                    <div class="form-check form-switch">
+                      <label for="BGMVolumeRange" class="form-label">背景音樂<label id="BGMVolumeValue">10</label></label>
+                      <input type="range" class="form-range" min="0" max="100" id="BGMVolumeRange" value="10">
+                    </div>
                   </div>
-                  <div class="col form-check">
-                    <input class="form-check-input" type="radio" name="flexRadioDefault" id="CardUseMode_1">
-                    <label class="form-check-label" for="flexRadioDefault1">
-                      QE更換施放卡牌 Space施放
-                    </label>
+                  <div class="col-6">
+                    <div class="form-check form-switch">
+                      <label for="ShootVolumeRange" class="form-label">射擊聲<label id="ShootVolumeValue">30</label></label>
+                      <input type="range" class="form-range" min="0" max="100" id="ShootVolumeRange" value="30">
+                    </div>
+                  </div>
+                </div>
+                <div class="row justify-content-center">
+                  <div class="col-6">
+                    <div class="form-check form-switch">
+                      <label for="UIVolumeRange" class="form-label">UI點擊<label id="UIVolumeValue">100</label></label>
+                      <input type="range" class="form-range" min="0" max="100" id="UIVolumeRange" value="100">
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="form-check form-switch">
+                      <label for="HumanVolumeRange" class="form-label">人物聲音<label id="HumanVolumeValue">100</label></label>
+                      <input type="range" class="form-range" min="0" max="100" id="HumanVolumeRange" value="100">
+                    </div>
+                  </div>
+                </div>
+                <div class="row justify-content-center">
+                  <div class="col-6">
+                    <div class="form-check form-switch">
+                      <label for="BoomVolumeRange" class="form-label">爆炸音效<label id="BoomVolumeValue">100</label></label>
+                      <input type="range" class="form-range" min="0" max="100" id="BoomVolumeRange" value="100">
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="form-check form-switch">
+                      <label for="FootVolumeRange" class="form-label">腳步聲<label id="FootVolumeValue">10</label></label>
+                      <input type="range" class="form-range" min="0" max="100" id="FootVolumeRange" value="10">
+                    </div>
+                  </div>
+                </div>
+                <div class="row justify-content-center">
+                  <div class="col-6">
+                    <div class="form-check form-switch">
+                      <label for="BuildVolumeRange" class="form-label">建築音效<label id="BuildVolumeValue">100</label></label>
+                      <input type="range" class="form-range" min="0" max="100" id="BuildVolumeRange" value="100">
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="form-check form-switch">
+                      <label for="VolumeRange" class="form-label">腳步聲<label id="VolumeValue">100</label></label>
+                      <input type="range" class="form-range" min="0" max="100" id="VolumeRange" value="1000">
+                    </div>
                   </div>
                 </div>
               </div>
-              <hr>
             </div>
-            <div class="rounded text-light bg-dark" id="basic-addon1">
-              <hr>
-              <strong>顯示設定</strong>
-              <div class="container">
-                <div class="row align-items-start">
-                  <div class="form-check form-switch">
-                    <label for="fpsRange" class="form-label">FPS最大值設置:<label id="fpsValue">50</label></label>
-                    <input type="range" class="form-range" min="10" max="150" id="fpsRange" value="50">
-                  </div>
-                  <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" value="" id="displayWaveCheck" checked>
-                    <label class="form-check-label" for="displayWaveCheck">
-                      是否顯示波浪
-                    </label>
-                  </div>
-                  <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" value="" id="displayBuildingHpCheck" checked>
-                    <label class="form-check-label" for="displayBuildingHpCheck">
-                      顯示建築血量條
-                    </label>
-                  </div>
-                  <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" value="" id="displayBuildingMistCheck" checked>
-                    <label class="form-check-label" for="displayBuildingMistCheck">
-                      顯示建築迷霧(遠方的建築不會被顯示)
-                    </label>
-                  </div>
-                  <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" value="" id="displayMouseCircleWithoutDelayCheck">
-                    <label class="form-check-label" for="displayMouseCircleWithoutDelayCheck">
-                      滑鼠旋轉粒子特效移動動畫
-                    </label>
-                  </div>
-                  <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" value="" id="displayWithoutLagCheck">
-                    <label class="form-check-label" for="displayWithoutLagCheck">
-                      顯示即時玩家訊息(默認設定上系統會特殊處理玩家資料使您的遊戲更加流暢 如網路環境差請勿勾選)
-                    </label>
-                  </div>
-                </div>
-              </div>
-              <hr>
-            </div>
+            <hr>
           </div>
         </div>
       </div>
     </div>
   </div>
+
   <div class="fixed-bottom">
     <!--
     <button style="display:block;" onclick="javascript:phone_open()" class="btn btn-close-white" type="button" id="phone_open">
@@ -262,6 +337,71 @@
     <img src="views/img/build/obsDel.png" id="obsDel">
 
   </div>
+  <div id="MusicList">
+    <audio id="Music_click">
+      <source = src="views/audio/button/click.ogg" type="audio/ogg">
+    </audio>
+    <audio id="Music_switch">
+      <source = src="views/audio/button/switch.ogg" type="audio/ogg">
+    </audio>
+    <audio id="Music_rollover">
+      <source = src="views/audio/button/rollover.ogg" type="audio/ogg">
+    </audio>
+    <audio id="Music_mouserelease">
+      <source = src="views/audio/button/mouserelease.ogg" type="audio/ogg">
+    </audio>
+    <audio id="begin">
+      <source = src="views/audio/game/begin.ogg" type="audio/ogg">
+    </audio>
+    <audio id="prepare_yourself">
+      <source = src="views/audio/game/prepare_yourself.ogg" type="audio/ogg">
+    </audio>
+    <audio id="tie_breaker">
+      <source = src="views/audio/game/tie_breaker.ogg" type="audio/ogg">
+    </audio>
+    <audio id="time">
+      <source = src="views/audio/game/time.ogg" type="audio/ogg">
+    </audio>
+    <audio id="footstep_0">
+      <source = src="views/audio/game/footstep_0.ogg" type="audio/ogg">
+    </audio>
+    <audio id="footstep_1">
+      <source = src="views/audio/game/footstep_1.ogg" type="audio/ogg">
+    </audio>
+    <audio id="footstep_2">
+      <source = src="views/audio/game/footstep_2.ogg" type="audio/ogg">
+    </audio>
+    <audio id="footstep_3">
+      <source = src="views/audio/game/footstep_3.ogg" type="audio/ogg">
+    </audio>
+    <audio id="footstep_4">
+      <source = src="views/audio/game/footstep_4.ogg" type="audio/ogg">
+    </audio>
+    <audio id="footstep_5">
+      <source = src="views/audio/game/footstep_5.ogg" type="audio/ogg">
+    </audio>
+    <audio id="footstep_6">
+      <source = src="views/audio/game/footstep_6.ogg" type="audio/ogg">
+    </audio>
+    <audio id="footstep_7">
+      <source = src="views/audio/game/footstep_7.ogg" type="audio/ogg">
+    </audio>
+    <audio id="footstep_8">
+      <source = src="views/audio/game/footstep_8.ogg" type="audio/ogg">
+    </audio>
+    <audio id="footstep_9">
+      <source = src="views/audio/game/footstep_9.ogg" type="audio/ogg">
+    </audio>
+    <audio id="fireball_shoot">
+      <source = src="views/audio/game/fireball.ogg" type="audio/ogg">
+    </audio>
+    <audio id="boom">
+      <source = src="views/audio/game/boom.ogg" type="audio/ogg">
+    </audio>
+    <audio id="building">
+      <source = src="views/audio/game/building.ogg" type="audio/ogg">
+    </audio>
+  </div>
   <script>
     const PI = 3.1415926;
     const id = Date.now().toString();//獲取前端ID
@@ -297,6 +437,16 @@
     var displayBuildingHp = true;
     var displayBuildingMist = true;
     var displayMouseCircleWithoutDelay = true;
+
+    var MainVolume = 0.4;
+    var BGMVolume = 1.0;
+    var FootVolume = 0.1;
+    var ShootVolume = 0.3;
+    var UIVolume = 1.0;
+    var BoomVolume = 1.0;
+    var HumanVolume = 1.0;
+    var BuildVolume = 1.0;
+
     //
     var cardchoose = 0;
     var gamestat = 1;
@@ -351,6 +501,7 @@
   <script src="scripts/Terrain.js"></script>
   <script src="scripts/jqueryrotate.js"></script>
   <script src="scripts/Carduse.js"></script>
+  <script src="scripts/gpu.js"></script>
   <script src="scripts/jquery-ui/jquery-ui.js"></script>
 </body>
 </html>

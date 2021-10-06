@@ -145,6 +145,31 @@ document.onkeyup=function(event){
   }
 };
 
+var mouseRight = false;
+document.onmousedown=function(event){
+  if (event.button==2)
+    mouseRight = true;
+  else{
+    if(gamestat == 2)
+      if(cardUseMode == 1)
+        skillCardUse();
+  }
+};
+
+document.onmouseup=function(event){
+  if (event.button==2){
+    mouseRight = false;
+    var temp_x = Window_width/2;
+    var temp_y = Window_height/2;
+    for (var i = 1; i <= 7; i++) {
+      if(distanceCount(mouse_x,mouse_y,temp_x+Math.cos(i/7*2*PI)*200,temp_y+Math.sin(i/7*2*PI)*200) <= 100){
+        emotionSend(i);
+        return;
+      }
+    }
+  }
+};
+
 function gameMouseInput(){
   offset = $("#Game_Bg").offset();
   $(document).mousemove(function(e){
@@ -172,15 +197,6 @@ $('#displayWaveCheck').on('change', function () {
   }
   else{
     displayWave = false;
-  }
-  musicPlay('Music_rollover',UIVolume);
-})
-$('#displayWithoutLagCheck').on('change', function () {
-  if ($('#displayWithoutLagCheck').prop('checked')) {
-    displayWithoutLag = true;
-  }
-  else{
-    displayWithoutLag = false;
   }
   musicPlay('Music_rollover',UIVolume);
 })

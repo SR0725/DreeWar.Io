@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">.
 
 </head>
-<body style="background-color:#121212;">
+<body style="background-color:#121212;" oncontextmenu="window.event.returnValue=false;">
   <div class="position-absolute top-50 start-50 translate-middle" id="MainSence">
     <div style="width: 600px;">
       <div class="input-group" id="chat-box">
@@ -82,15 +82,15 @@
             <div class="container">
               <div class="row align-items-start">
                 <div class="col form-check">
-                  <input class="form-check-input" type="radio" name="flexRadioDefault" id="CardUseMode_0" checked>
+                  <input class="form-check-input" type="radio" name="flexRadioDefault" id="CardUseMode_0">
                   <label class="form-check-label" for="flexRadioDefault2">
                     QERF對應四個鍵位進行施放
                   </label>
                 </div>
                 <div class="col form-check">
-                  <input class="form-check-input" type="radio" name="flexRadioDefault" id="CardUseMode_1">
+                  <input class="form-check-input" type="radio" name="flexRadioDefault" id="CardUseMode_1" checked>
                   <label class="form-check-label" for="flexRadioDefault1">
-                    QE更換施放卡牌 Space施放
+                    QE更換施放卡牌 滑鼠左鍵施放
                   </label>
                 </div>
               </div>
@@ -128,12 +128,6 @@
                   <input class="form-check-input" type="checkbox" value="" id="displayMouseCircleWithoutDelayCheck">
                   <label class="form-check-label" for="displayMouseCircleWithoutDelayCheck">
                     滑鼠旋轉粒子特效移動動畫
-                  </label>
-                </div>
-                <div class="form-check form-switch">
-                  <input class="form-check-input" type="checkbox" value="" id="displayWithoutLagCheck">
-                  <label class="form-check-label" for="displayWithoutLagCheck">
-                    顯示即時玩家訊息(默認設定上系統會特殊處理玩家資料使您的遊戲更加流暢 如網路環境差請勿勾選)
                   </label>
                 </div>
               </div>
@@ -265,6 +259,9 @@
     <img src="views/img/blue_desert.png" id="blue_desert">
     <!--裝飾物-->
     <img src="views/img/waveWater.png" id="waveWater">
+    <img src="views/img/midtree.png" id="midtree">
+    <img src="views/img/frog.png" id="frog">
+    <img src="views/img/frog_t.png" id="frog_t">
 
     <!--粒子-->
     <img src="views/img/fireball.png" id="fireball">
@@ -310,7 +307,12 @@
     <img src="views/img/UI/bp1.png" id="bp1">
     <img src="views/img/UI/bp2.png" id="bp2">
     <img src="views/img/UI/bp3.png" id="bp3">
-    <img src="views/img/UI/hp.png" id="hp_bg">
+    <img src="views/img/UI/box.png" id="box">
+    <img src="views/img/UI/occupy_stone.png" id="occupy_stone">
+
+    <img src="views/img/UI/hudPlayer_blue.png" id="hudPlayer_blue">
+    <img src="views/img/UI/hudPlayer_pink.png" id="hudPlayer_pink">
+    <img src="views/img/UI/hudPlayer_mid.png" id="hudPlayer_mid">
 
     <!--技能施放-->
     <img src="views/img/skill/s0.png" id="s0_icon">
@@ -335,7 +337,21 @@
     <img src="views/img/build/wall.png" id="wall">
     <img src="views/img/build/obsSum.png" id="obsSum">
     <img src="views/img/build/obsDel.png" id="obsDel">
-
+    <!--emotion-->
+    <img src="views/img/emotion/emote_1.png" id="emote_1">
+    <img src="views/img/emotion/emote_2.png" id="emote_2">
+    <img src="views/img/emotion/emote_3.png" id="emote_3">
+    <img src="views/img/emotion/emote_4.png" id="emote_4">
+    <img src="views/img/emotion/emote_5.png" id="emote_5">
+    <img src="views/img/emotion/emote_6.png" id="emote_6">
+    <img src="views/img/emotion/emote_7.png" id="emote_7">
+    <img src="views/img/emotion/emoteUI_1.png" id="emoteUI_1">
+    <img src="views/img/emotion/emoteUI_2.png" id="emoteUI_2">
+    <img src="views/img/emotion/emoteUI_3.png" id="emoteUI_3">
+    <img src="views/img/emotion/emoteUI_4.png" id="emoteUI_4">
+    <img src="views/img/emotion/emoteUI_5.png" id="emoteUI_5">
+    <img src="views/img/emotion/emoteUI_6.png" id="emoteUI_6">
+    <img src="views/img/emotion/emoteUI_7.png" id="emoteUI_7">
   </div>
   <div id="MusicList">
     <audio id="Music_click">
@@ -401,10 +417,23 @@
     <audio id="building">
       <source = src="views/audio/game/building.ogg" type="audio/ogg">
     </audio>
+    <audio id="occuping">
+      <source = src="views/audio/game/occuping.ogg" type="audio/ogg">
+    </audio>
+    <audio id="occupydown">
+      <source = src="views/audio/game/occupydown.ogg" type="audio/ogg">
+    </audio>
   </div>
   <script>
     const PI = 3.1415926;
     const id = Date.now().toString();//獲取前端ID
+
+    var occupyTime = 0; // -5 = blue 5 = red
+    var bluescore = 0;
+    var redscore = 0;
+    var foccupyTime = {};//宣告粒子
+
+
     var race = 1;//種族類別
     var msgBox = $('#msg');//聊天欄
     var socket = io();//取得socket包
@@ -423,6 +452,7 @@
     var skillObjectlist_Now = {};
     var skillObjectlist_buffer = {};
     var skillObjectlist_UT = 0;
+    var emotionList = {};
     var fps = 50;//FPSDisplayer
     var fps_T = 50;//FPSDisplayer
     var fps_T1 = 50;//FPSDisplayer
@@ -431,9 +461,8 @@
     var actionBarTime = -1;
     //set
     var FramePerSencond = 50;//FPSset
-    var cardUseMode = 0;
+    var cardUseMode = 1;
     var displayWave = true;
-    var displayWithoutLag = false;
     var displayBuildingHp = true;
     var displayBuildingMist = true;
     var displayMouseCircleWithoutDelay = true;

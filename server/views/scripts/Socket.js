@@ -45,6 +45,11 @@ document.addEventListener("DOMContentLoaded", () => {
     particlelist[Date.now()] = d;
   });//獲取效果資料
 
+  socket.on("emotionDataGet", function (d,index) {
+    emotionList[index] = d;
+    console.log(d,index);
+  });
+
   socket.on("buildDataGet", function (d,index) {
     buildinglist[index] = d;
     if(d['type'] == 2 || d['type'] == 5)
@@ -69,6 +74,13 @@ document.addEventListener("DOMContentLoaded", () => {
     particleDataSend({particle:2,time:1,maintime:1000,x:buildinglist[index]['x'],y:buildinglist[index]['y']});
     delete buildinglist[index];
   });//更新建築資料
+
+  socket.on("gameDataGet", function (msg) {
+    bluescore = msg.bluescore;
+    redscore = msg.redscore;
+    occupyTime = msg.occupyTime;
+    foccupyTime = msg.foccupyTime;
+  });
 
   socket.on("die", function () {
     selfPlayer['x'] = -3000;
@@ -111,6 +123,10 @@ function send_message(){
   //convert and send data to server
   socket.emit("send", msg);
   message_input.val(''); //reset message input
+}
+
+function emotionSend(type) {
+  socket.emit("emotionDataGet",{type:type,time:100,id:id});
 }
 
 //mpUse

@@ -3,6 +3,22 @@ const app = express();
 const server = require('http').Server(app);
 const io = require('socket.io')(server);
 
+//世界樹
+var occupyTime = 0; // -5 = blue 5 = red
+var foccupyTime = {}; // -5 = blue 5 = red
+foccupyTime[1] = 0; // -5 = blue 5 = red
+foccupyTime[2] = 0; // -5 = blue 5 = red
+foccupyTime[3] = 0; // -5 = blue 5 = red
+foccupyTime[4] = 0; // -5 = blue 5 = red
+var spawnTowerList = {}; // -5 = blue 5 = red
+spawnTowerList[0] = {x:129,y:1036,team:1};
+spawnTowerList[1] = {x:129,y:636,team:1};
+spawnTowerList[2] = {x:4019,y:1036,team:2};
+spawnTowerList[3] = {x:4019,y:636,team:2};
+
+var bluescore = 0;
+var redscore = 0;
+
 var gamestat = 1;         //遊戲狀態 0 尚未開始 1遊戲開始 2 遊戲結算等待重製
 var onlineCount = 0;      //遊戲人數
 var blueTeamCount = 0;    //藍隊人數
@@ -40,6 +56,7 @@ var mpBasicRegVal = 5;
 var bpBasicRegVal = 15;
 var bpBasicRegMul = 0.8;
 var mpBasicRegMul = 0.8;
+var winscore = 300;
 
 
 io.on('connection', (socket) => {
@@ -171,6 +188,14 @@ io.on('connection', (socket) => {
 
       }
     });
+    /*獲取表情資料*/
+    socket.on("emotionDataGet", (msg) => {
+      try {
+        io.to('GameRoom').emit("emotionDataGet",msg,socket.id);
+      } catch (e) {
+
+      }
+    });
     /*獲取建築資料*/
     socket.on("buildingDataGet", (msg) => {
       try {
@@ -284,7 +309,7 @@ function dataDeal_Skill() {
           for (let [id ,player] of Object.entries(playerlist)) {
             if(friendlyFire == false){
               if(player['team'] != object['team']){
-                if(colliderBoxCircle(player['x'],player['y'],64,128,object['x'],object['y'],20)){
+                if(colliderBoxCircle(player['x'],player['y'],64,128,object['x'],object['y'],30)){
                   player['health'] -= object['damage'];
                   io.to('GameRoom').emit("particleDataGet",{particle:1,time:1,maintime:300,x:object['x'],y:object['y']});
                   io.to(id).emit("hurt");
@@ -299,7 +324,7 @@ function dataDeal_Skill() {
               }
             }else{
               if(player['id'] != object['id']){
-                if(colliderBoxCircle(player['x'],player['y'],64,128,object['x'],object['y'],20)){
+                if(colliderBoxCircle(player['x'],player['y'],64,128,object['x'],object['y'],30)){
                   player['health'] -= object['damage'];
                   io.to('GameRoom').emit("particleDataGet",{particle:1,time:1,maintime:300,x:object['x'],y:object['y']});
                   io.to(id).emit("hurt");
@@ -334,7 +359,7 @@ function dataDeal_Skill() {
             for (let [id ,player] of Object.entries(playerlist)) {
               if(friendlyFire == false){
                 if(player['team'] != object['team']){
-                  if(colliderBoxCircle(player['x'],player['y'],64,128,object['x'],object['y'],20)){
+                  if(colliderBoxCircle(player['x'],player['y'],64,128,object['x'],object['y'],50)){
                     player['health'] -= object['damage'];
                     io.to('GameRoom').emit("particleDataGet",{particle:1,time:1,maintime:300,x:object['x'],y:object['y']});
                     io.to(id).emit("hurt");
@@ -363,7 +388,7 @@ function dataDeal_Skill() {
                 }
               }else{
                 if(player['id'] != object['id']){
-                  if(colliderBoxCircle(player['x'],player['y'],64,128,object['x'],object['y'],20)){
+                  if(colliderBoxCircle(player['x'],player['y'],64,128,object['x'],object['y'],50)){
                     player['health'] -= object['damage'];
                     io.to('GameRoom').emit("particleDataGet",{particle:1,time:1,maintime:300,x:object['x'],y:object['y']});
                     io.to(id).emit("hurt");
@@ -459,7 +484,7 @@ function dataDeal_Building(){
           for (let [id ,player] of Object.entries(playerlist)) {
             if(player['team'] != build['team'] && gametick % 150 == 1){
               if(colliderBoxCircle(player['x'],player['y'],64,128,build['x'],build['y'],800)){
-                shoot(build['x'],build['y'],player['x'],player['y'],build['team']);
+                shoot(build['x'],build['y'],player['x'],player['y'],build['team'],10);
               }
             }
           }
@@ -486,6 +511,121 @@ function dataDeal_Building(){
   }
 }
 
+function gameSystem() {
+  //佔領
+  for (let [id ,player] of Object.entries(playerlist)) {
+    //世界樹
+    if(player['x'] < 2291 && player['x'] > 1874 && player['y'] < 955 && player['y'] > 563){
+      if(player['team'] == 1){
+        occupyTime -= 1;
+      }else{
+        occupyTime += 1;
+      }
+    }
+    //青蛙1
+    else if(player['x'] < 1700 && player['x'] > 1500 && player['y'] < 400 && player['y'] > 281){
+      if(player['team'] == 1){
+        foccupyTime[1] -= 1;
+      }else{
+        foccupyTime[1] += 1;
+      }
+    }
+    //青蛙2
+    else if(player['x'] < 1700 && player['x'] > 1500 && player['y'] < 1260 && player['y'] > 1100){
+      if(player['team'] == 1){
+        foccupyTime[2] -= 1;
+      }else{
+        foccupyTime[2] += 1;
+      }
+    }
+    //青蛙3
+    else if(player['x'] < 2792 && player['x'] > 2547 && player['y'] < 400 && player['y'] > 281){
+      if(player['team'] == 1){
+        foccupyTime[3] -= 1;
+      }else{
+        foccupyTime[3] += 1;
+      }
+    }
+    //青蛙4
+    else if(player['x'] < 2792 && player['x'] > 2547 && player['y'] < 1260 && player['y'] > 1100){
+      if(player['team'] == 1){
+        foccupyTime[4] -= 1;
+      }else{
+        foccupyTime[4] += 1;
+      }
+    }
+  }
+  if(occupyTime < -5) occupyTime = -5;
+  if(occupyTime > 5) occupyTime = 5;
+  for (var i = 1; i <= 4; i++) {
+    if(foccupyTime[i] > 3) foccupyTime[i] = 3;
+    if(foccupyTime[i] < -3) foccupyTime[i] = -3;
+  }
+  //分數
+  if(occupyTime == -5) bluescore += 1;
+  if(occupyTime == 5) redscore += 1;
+  //判斷勝負
+  if(bluescore >= winscore){
+  }else if(redscore >= winscore){
+  }
+  //青蛙攻擊
+  if(occupyTime == -5){
+    for (var i = 1; i <= 4; i++) {
+      if(foccupyTime[i] == 3){
+        switch (i) {
+          case 1:
+            for (var j = 0; j < 2; j++) shoot(1614,361,2130+(Math.random()-0.5)*400,796+(Math.random()-0.5)*400,2,5);
+            break;
+          case 2:
+            for (var j = 0; j < 2; j++) shoot(1614,1212,2130+(Math.random()-0.5)*400,796+(Math.random()-0.5)*400,2,5);
+            break;
+          case 3:
+            for (var j = 0; j < 2; j++) shoot(2692,361,2130+(Math.random()-0.5)*400,796+(Math.random()-0.5)*400,2,5);
+            break;
+          case 4:
+            for (var j = 0; j < 2; j++) shoot(2692,1212,2130+(Math.random()-0.5)*400,796+(Math.random()-0.5)*400,2,5);
+            break;
+          default:
+
+        }
+      }
+    }
+  }else if(occupyTime == 5){
+    for (var i = 1; i <= 4; i++) {
+      if(foccupyTime[i] == -3){
+        switch (i) {
+          case 1:
+            for (var j = 0; j < 2; j++) shoot(1614,361,2130+(Math.random()-0.5)*400,796+(Math.random()-0.5)*400,1,5);
+            break;
+          case 2:
+            for (var j = 0; j < 2; j++) shoot(1614,1212,2130+(Math.random()-0.5)*400,796+(Math.random()-0.5)*400,1,5);
+            break;
+          case 3:
+            for (var j = 0; j < 2; j++) shoot(2692,361,2130+(Math.random()-0.5)*400,796+(Math.random()-0.5)*400,1,5);
+            break;
+          case 4:
+            for (var j = 0; j < 2; j++) shoot(2692,1212,2130+(Math.random()-0.5)*400,796+(Math.random()-0.5)*400,1,5);
+            break;
+          default:
+
+        }
+      }
+    }
+  }
+  //重生塔攻擊spawnTowerList
+  for (let [index ,build] of Object.entries(spawnTowerList)) {
+    for (let [id ,player] of Object.entries(playerlist)) {
+      if(player['team'] != build['team']){
+        if(colliderBoxCircle(player['x'],player['y'],64,128,build['x'],build['y'],600)){
+          shoot(build['x'],build['y'],player['x'],player['y'],build['team'],40);
+        }
+      }
+    }
+  }
+
+  io.to('GameRoom').emit("gameDataGet",{bluescore:bluescore,redscore:redscore,occupyTime:occupyTime,foccupyTime:foccupyTime});
+}
+
 function gameUpdate(){
   //外掛防範與個玩家數據處理
   dataDeal_Player();
@@ -496,6 +636,9 @@ function gameUpdate(){
   dataDeal_Effect();
   //建築效果施加
   dataDeal_Building();
+  //遊戲核心系統
+  if(gametick % 50 == 1)
+    gameSystem();
   gametick+=1;//遊戲刻增加
   skillObject['tick'] = gametick;//註上發送戳記以方便客戶端判斷資料完整性
   playerlist['tick'] = gametick;//遊戲刻增加
@@ -668,7 +811,7 @@ function commandTest(msg,id){
   }
 }//偵測客戶端的訊息是否為遊戲指令
 
-function shoot(bx,by,px,py,team){
+function shoot(bx,by,px,py,team,damage){
   var skillspeed = 32.0;
   var motion_x = px-bx;
   var motion_y = py-by+64;
@@ -677,7 +820,7 @@ function shoot(bx,by,px,py,team){
   motion_y = (skillspeed/temp)*motion_y;
   var SkillObject = {
     id : 'bigAnt',
-    name : '食蝕獸',
+    name : '砲塔',
     x : bx,
     y : by,
     motion_x :motion_x,
@@ -685,9 +828,9 @@ function shoot(bx,by,px,py,team){
     team :team,
     skill :0,
     race :0,
-    damage : 10,
+    damage : damage,
     time :0,
-    maintime:5000
+    maintime:1000
   }
   skillObject[skillindex] = SkillObject;
   skillindex += 1;
@@ -736,6 +879,9 @@ app.get('/views/img/build/:id', (req, res) => {
 });
 app.get('/views/img/UI/:id', (req, res) => {
     res.sendFile( __dirname + '/views/img/UI/'+req.params.id);
+});
+app.get('/views/img/emotion/:id', (req, res) => {
+    res.sendFile( __dirname + '/views/img/emotion/'+req.params.id);
 });
 app.get('/views/audio/button/:id', (req, res) => {
     res.sendFile( __dirname + '/views/audio/button/'+req.params.id);

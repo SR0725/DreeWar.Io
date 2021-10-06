@@ -118,9 +118,9 @@ function PlayerImgTest(name,team) {
 			break;
 		default:
 			if(team = 1)
-				return '<img src="views/img/hudPlayer_blue.png" class="card-img" style="width:50px;border-radius: 50%;">';
+				return '<img src="views/img/UI/hudPlayer_blue.png" class="card-img" style="width:50px;border-radius: 50%;">';
 			else
-				return '<img src="views/img/hudPlayer_pink.png" class="card-img" style="width:50px;border-radius: 50%;">';
+				return '<img src="views/img/UI/hudPlayer_pink.png" class="card-img" style="width:50px;border-radius: 50%;">';
 			break;
 
 	}

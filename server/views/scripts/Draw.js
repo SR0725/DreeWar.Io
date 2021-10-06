@@ -37,12 +37,15 @@ function VisibleTest(x1,y1,x2,y2) {
   var distance = Math.pow((x1-x2),2)+Math.pow((y1-y2),2);
   if(distance < 360000){
     if(RayTest(x1,y1,x2,y2))
-      return 0;
+      return 0.3;
     if(obstx.getImageData(x1,y1,1,1).data[1] > 100) return 0.4;
     return 1;
   }else if(distance < 722500){
     if(RayTest(x1,y1,x2,y2))
-      return 0;
+      if((0.3 - (distance-360000)/362500) < 0)
+        return 0;
+      else
+        return 0.3 - (distance-360000)/362500;
     if(obstx.getImageData(x1,y1,1,1).data[1] > 100){
       if((0.4 - (distance-360000)/362500) < 0)
         return 0;
@@ -105,8 +108,63 @@ function draw() {
   //UI介面 ActionBar
   if(actionBarTime >= 0)
     UI_ActionBarDisplay();
+  if(mouseRight)
+    emotionSelect();
+  //Bossbar
+  gameDisplay();
   mouseCircle();
   setTimeout('draw()',(1000/FramePerSencond));
+}
+
+function emotionSelect(){
+  var temp_x = Window_width/2;
+  var temp_y = Window_height/2;
+  for (var i = 1; i <= 7; i++) {
+    var img = document.getElementById('emoteUI_'+i);
+    ctx.drawImage(img, temp_x+Math.cos(i/7*2*PI)*200,temp_y+Math.sin(i/7*2*PI)*200,64,76);
+  }
+}
+
+function gameDisplay(){
+  ctx.textAlign = "left";
+  ctx.textBaseline = "middle";
+  ctx.font = "21px Verdana";
+
+  //occupy
+  var temp_x = Window_width*0.45;
+  var temp_y = 48;
+  var img = document.getElementById('box');
+  ctx.drawImage(img,temp_x+32,temp_y,Window_width*0.10,5);
+
+  temp_x = Window_width*0.485;
+  temp_y = 30;
+  img = document.getElementById('midtree');
+  ctx.drawImage(img,temp_x+Window_width*0.066*(occupyTime+5)/10,temp_y,10,20);
+
+  //blue
+  temp_x = Window_width*0.45;
+  temp_y = 10;
+  img = document.getElementById('hudPlayer_blue');
+  ctx.drawImage(img,temp_x,temp_y,64,64);
+
+  var txt_len = ctx.measureText(bluescore).width;
+  ctx.fillStyle = "rgba(16,16,16,0.4)";
+  ctx.fillRect(temp_x-6-txt_len,temp_y+16,txt_len+14, 30)
+  ctx.fillStyle = "rgba(245,245,245,1)";
+  ctx.fillText(bluescore,temp_x+1-txt_len,temp_y+32);
+
+  //red
+  temp_x = Window_width*0.55;
+  temp_y = 10;
+  img = document.getElementById('hudPlayer_pink');
+  ctx.drawImage(img,temp_x,temp_y,64,64);
+
+
+  txt_len = ctx.measureText(redscore).width;
+  ctx.fillStyle = "rgba(16,16,16,0.4)";
+  ctx.fillRect(temp_x+56,temp_y+16,txt_len+14, 30)
+  ctx.fillStyle = "rgba(245,245,245,1)";
+  ctx.fillText(redscore,temp_x+63,temp_y+32);
 }
 
 /*
@@ -140,7 +198,62 @@ function TerrainDraw(){
     ctx.drawImage(img, -1*(selfPlayer['x']-(Window_width/2))+(hurtAnimationTime%5)*5,-1*(selfPlayer['y']-(Window_height/2)-75)+(hurtAnimationTime%5)*5,4230,1650);
 }
 
+function occupyCircleDraw(temp_x,temp_y){
+  if(occupyTime == -5){
+    img = document.getElementById("hudPlayer_blue");
+    ctx.drawImage(img,temp_x-32,temp_y-232, 64, 64);
+  }else if(occupyTime == 5){
+    img = document.getElementById("hudPlayer_pink");
+    ctx.drawImage(img,temp_x-32,temp_y-232, 64, 64);
+  }else{
+    if(occupyTime > 0){
+      ctx.beginPath();
+      ctx.moveTo( temp_x, temp_y-200 );
+      ctx.arc(temp_x,temp_y-200,30, 0, Math.PI *2*(occupyTime/5), false);
+      ctx.closePath();
+      ctx.fillStyle = "rgba(220,130,100,1.0)";
+      ctx.fill();
+    }else if(occupyTime < 0){
+      ctx.beginPath();
+      ctx.moveTo( temp_x, temp_y-200 );
+      ctx.arc(temp_x,temp_y-200,30, 0, Math.PI *-2*(occupyTime/5), false);
+      ctx.closePath();
+      ctx.fillStyle = "rgba(100,130,220,1.0)";
+      ctx.fill();
+    }
+    img = document.getElementById("hudPlayer_mid");
+    ctx.drawImage(img,temp_x-32,temp_y-232, 64, 64);
+  }
+}
+function foccupyCircleDraw(temp_x,temp_y,frog){
+  if(foccupyTime[frog] == -3){
+    img = document.getElementById("hudPlayer_blue");
+    ctx.drawImage(img,temp_x-32,temp_y-32, 64, 64);
+  }else if(foccupyTime[frog] == 3){
+    img = document.getElementById("hudPlayer_pink");
+    ctx.drawImage(img,temp_x-32,temp_y-32, 64, 64);
+  }else{
+    if(foccupyTime[frog] > 0){
+      ctx.beginPath();
+      ctx.moveTo( temp_x, temp_y );
+      ctx.arc(temp_x,temp_y,30, 0, Math.PI *2*(foccupyTime[frog]/3), false);
+      ctx.closePath();
+      ctx.fillStyle = "rgba(220,130,100,1.0)";
+      ctx.fill();
+    }else if(foccupyTime[frog] < 0){
+      ctx.beginPath();
+      ctx.moveTo( temp_x, temp_y );
+      ctx.arc(temp_x,temp_y,30, 0, Math.PI *-2*(foccupyTime[frog]/3), false);
+      ctx.closePath();
+      ctx.fillStyle = "rgba(100,130,220,1.0)";
+      ctx.fill();
+    }
+    img = document.getElementById("hudPlayer_mid");
+    ctx.drawImage(img,temp_x-32,temp_y-32, 64, 64);
+  }
+}
 function buildingDisplay(){
+  //人造地形
   for (let [index,build] of Object.entries(buildinglist)) {
     if(Math.abs(build['x'] - selfPlayer['x']) < (Window_width/2)+50 && Math.abs(build['y'] - selfPlayer['y']) < (Window_height/2)+50){
       var temp_x = build['x'] - selfPlayer['x'] + (Window_width/2);
@@ -200,60 +313,112 @@ function buildingDisplay(){
       ctx.globalAlpha = 1.0;
     }
   }
+  //世界之樹
+  var temp_x = 2130 - selfPlayer['x'] + (Window_width/2);
+  var temp_y = 696 - selfPlayer['y'] + (Window_height/2);
+  img = document.getElementById("midtree");
+  ctx.drawImage(img,temp_x-102,temp_y-212, 204, 414);
+  //佔領列表
+  occupyCircleDraw(temp_x,temp_y);
+  //青蛙1
+  var temp_x = 1614 - selfPlayer['x'] + (Window_width/2);
+  var temp_y = 361 - selfPlayer['y'] + (Window_height/2);
+  img = document.getElementById("frog_t");
+  ctx.drawImage(img,temp_x-128,temp_y-128, 256, 256);
+  foccupyCircleDraw(temp_x,temp_y,1);
+  //青蛙2
+  var temp_x = 1614 - selfPlayer['x'] + (Window_width/2);
+  var temp_y = 1212 - selfPlayer['y'] + (Window_height/2);
+  img = document.getElementById("frog_t");
+  ctx.drawImage(img,temp_x-128,temp_y-128, 256, 256);
+  foccupyCircleDraw(temp_x,temp_y,2);
+  //青蛙3
+  var temp_x = 2692 - selfPlayer['x'] + (Window_width/2);
+  var temp_y = 361 - selfPlayer['y'] + (Window_height/2);
+  img = document.getElementById("frog");
+  ctx.drawImage(img,temp_x-128,temp_y-128, 256, 256);
+  foccupyCircleDraw(temp_x,temp_y,3);
+  //青蛙4
+  var temp_x = 2692 - selfPlayer['x'] + (Window_width/2);
+  var temp_y = 1212 - selfPlayer['y'] + (Window_height/2);
+  img = document.getElementById("frog");
+  ctx.drawImage(img,temp_x-128,temp_y-128, 256, 256);
+  foccupyCircleDraw(temp_x,temp_y,4);
+  //重生塔B
+  var temp_x = 129 - selfPlayer['x'] + (Window_width/2);
+  var temp_y = 1036 - selfPlayer['y'] + (Window_height/2);
+  img = document.getElementById("fort_blue");
+  ctx.drawImage(img,temp_x-55,temp_y-64, 111, 128);
+
+  var temp_x = 129 - selfPlayer['x'] + (Window_width/2);
+  var temp_y = 636 - selfPlayer['y'] + (Window_height/2);
+  img = document.getElementById("fort_blue");
+  ctx.drawImage(img,temp_x-55,temp_y-64, 111, 128);
+
+  //重生塔R
+  var temp_x = 4019 - selfPlayer['x'] + (Window_width/2);
+  var temp_y = 1036 - selfPlayer['y'] + (Window_height/2);
+  img = document.getElementById("fort_red");
+  ctx.drawImage(img,temp_x-55,temp_y-64, 111, 128);
+
+  var temp_x = 4019 - selfPlayer['x'] + (Window_width/2);
+  var temp_y = 636 - selfPlayer['y'] + (Window_height/2);
+  img = document.getElementById("fort_red");
+  ctx.drawImage(img,temp_x-55,temp_y-64, 111, 128);
+}
+
+function playerEmotion(x,y,emotion){
+  img = document.getElementById("emote_"+emotion);
+  ctx.drawImage(img,x+8,y-16, 48, 57);
 }
 
 function playerDisplay() {
-  if(displayWithoutLag == false){
-    for (let [index,player] of Object.entries(playerlist_Now)) {
-      if(player['id'] != id){//別人
-        if(Math.abs(player['x'] - selfPlayer['x']) < (Window_width/2)+50 && Math.abs(player['y'] - selfPlayer['y']) < (Window_height/2)+50){
-          var temp_x = player['x']+player['motion_x']*playerlist_UT - selfPlayer['x'] + (Window_width/2);
-          var temp_y = player['y']+player['motion_y']*playerlist_UT - selfPlayer['y'] + (Window_height/2);
-          ctx.globalAlpha = VisibleTest( player['x'], player['y'],selfPlayer['x'],selfPlayer['y']);
-          if(player['flip'] == true) ObjectFlipDraw(player,temp_x,temp_y);
-          else ObjectDraw(player,temp_x,temp_y);
-          hpBarDisplay(temp_x,temp_y,player['health'],100,42,12);
-          mpBarDisplay(temp_x,temp_y,player['mp'],10,42,26);
-          nameDisplay(temp_x,temp_y,player['name']);
-          ctx.globalAlpha = 1.0;
-        }
-      }else if(player['id'] != 'tick'){//自己
-        var temp_x = (Window_width/2);
-        var temp_y = (Window_height/2);
-        if(obstx.getImageData(player['x'],player['y'],1,1).data[1] > 100) ctx.globalAlpha = 0.4;
-        if(selfPlayer['flip'] == true) ObjectFlipDraw(selfPlayer,temp_x,temp_y);
-        else ObjectDraw(selfPlayer,temp_x,temp_y);
+  for (let [index,player] of Object.entries(playerlist_Now)) {
+    if(player['id'] != id){//別人
+      if(Math.abs(player['x'] - selfPlayer['x']) < (Window_width/2)+50 && Math.abs(player['y'] - selfPlayer['y']) < (Window_height/2)+50){
+        var temp_x = player['x']+player['motion_x']*playerlist_UT - selfPlayer['x'] + (Window_width/2);
+        var temp_y = player['y']+player['motion_y']*playerlist_UT - selfPlayer['y'] + (Window_height/2);
+        ctx.globalAlpha = VisibleTest( player['x'], player['y'],selfPlayer['x'],selfPlayer['y']);
+        if(player['flip'] == true) ObjectFlipDraw(player,temp_x,temp_y);
+        else ObjectDraw(player,temp_x,temp_y);
         hpBarDisplay(temp_x,temp_y,player['health'],100,42,12);
         mpBarDisplay(temp_x,temp_y,player['mp'],10,42,26);
         nameDisplay(temp_x,temp_y,player['name']);
         ctx.globalAlpha = 1.0;
-      }
-    }
-  }else{
-    for (let [index,player] of Object.entries(playerlist_buffer)) {
-      if(player['id'] != id){//別人
-        if(Math.abs(player['x'] - selfPlayer['x']) < (Window_width/2)+50 && Math.abs(player['y'] - selfPlayer['y']) < (Window_height/2)+50){
-          var temp_x = player['x'] - selfPlayer['x'] + (Window_width/2);
-          var temp_y = player['y'] - selfPlayer['y'] + (Window_height/2);
-          ctx.globalAlpha = VisibleTest( player['x'], player['y'],selfPlayer['x'],selfPlayer['y']);
-          if(player['flip'] == true) ObjectFlipDraw(player,temp_x,temp_y);
-          else ObjectDraw(player,temp_x,temp_y);
-          hpBarDisplay(temp_x,temp_y,player['health'],100,42,12);
-          mpBarDisplay(temp_x,temp_y,player['mp'],10,42,26);
-          nameDisplay(temp_x,temp_y,player['name']);
-          ctx.globalAlpha = 1.0;
-        }
-      }else if(player['id'] != 'tick'){//自己
-        var temp_x = (Window_width/2);
-        var temp_y = (Window_height/2);
-        if(obstx.getImageData(player['x'],player['y'],1,1).data[1] > 100) ctx.globalAlpha = 0.4;
+        ////emotion
+        try {
+          if(emotionList[index]['id'] == player['id']){
+            playerEmotion(temp_x,temp_y,emotionList[index]['type']);
+            if(emotionList[index]['time'] < 0)
+              delete emotionList[index];
+            else
+              emotionList[index]['time'] -= 1;
+          }
+        } catch (e) {
 
-        if(selfPlayer['flip'] == true) ObjectFlipDraw(selfPlayer,temp_x,temp_y);
-        else ObjectDraw(selfPlayer,temp_x,temp_y);
-        hpBarDisplay(temp_x,temp_y,player['health'],100,42,12);
-        mpBarDisplay(temp_x,temp_y,player['mp'],10,42,26);
-        nameDisplay(temp_x,temp_y,player['name']);
-        ctx.globalAlpha = 1.0;
+        }
+      }
+    }else if(player['id'] != 'tick'){//自己
+      var temp_x = (Window_width/2);
+      var temp_y = (Window_height/2);
+      if(obstx.getImageData(player['x'],player['y'],1,1).data[1] > 100) ctx.globalAlpha = 0.4;
+      if(selfPlayer['flip'] == true) ObjectFlipDraw(selfPlayer,temp_x,temp_y);
+      else ObjectDraw(selfPlayer,temp_x,temp_y);
+      hpBarDisplay(temp_x,temp_y,player['health'],100,42,12);
+      mpBarDisplay(temp_x,temp_y,player['mp'],10,42,26);
+      nameDisplay(temp_x,temp_y,player['name']);
+      ctx.globalAlpha = 1.0;
+      ////emotion
+      try {
+        if(emotionList[index]['id'] == player['id']){
+          playerEmotion(temp_x,temp_y,emotionList[index]['type']);
+          if(emotionList[index]['time'] < 0)
+            delete emotionList[index];
+          else
+            emotionList[index]['time'] -= 1;
+        }
+      } catch (e) {
+
       }
     }
   }

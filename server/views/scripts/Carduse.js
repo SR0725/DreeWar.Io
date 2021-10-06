@@ -1,11 +1,6 @@
 function skillCardRand(){
-  for (var i = 0; i < 4; i++) {//判斷是否有普攻卡牌
-    if(card[i] == 0 && i != cardchoose){
-      break;
-    }else if(i == 3){
-      return 0;
-    }
-  }
+  if(cardchoose == 0)
+    return 0;
   for (var i = 0; i < 4; i++) {//判斷是否有建築卡牌
     if(card[i] > 1000 && i != cardchoose){
       break;
@@ -31,9 +26,7 @@ function skillCardRand(){
 
   function SkillCard(){
     var temp_rand = Math.random()*100;
-    if(temp_rand < 40){
-      return 0;
-    }else if(temp_rand < 60){
+    if(temp_rand < 50){
       return race*10+1;
     }else if(temp_rand < 80){
       return race*10+2;
@@ -92,9 +85,11 @@ function cardDisplay(num) {
 }
 
 function skillCardInit(){
-  for (var i = 0; i < 4; i++){
-    card[i] = skillCardRand();
-  }
+  card[0] = 0;
+  card[1] = 1001;
+  card[2] = race*10+1;
+  card[3] = race*10+2;
+
   document.getElementById("card").innerHTML = '<div class="col-1"><div class="card bg-transparent magiccard border-0 card0" id="card0">'+cardDisplay(card[0])+'</div></div><div class="col-1"><div class="card bg-transparent magiccard border-0 card1" id="card1">'+cardDisplay(card[1])+'</div></div><div class="col-1"><div class="card bg-transparent magiccard border-0 card2" id="card2">'+cardDisplay(card[2])+'</div></div><div class="col-1"><div class="card bg-transparent magiccard border-0 card3" id="card3">'+cardDisplay(card[3])+'</div></div>';
   $('#card'+cardchoose).rotate({animateTo:15,duration: 200});
 }

@@ -112,8 +112,79 @@ function draw() {
     emotionSelect();
   //Bossbar
   gameDisplay();
+  //人物list
+  if(tabUse)
+    tabInfoDisplay();
+  //勝敗
+  if(winAnimation > 0)
+    winAnimationDisplay();
+  if(loseAnimation > 0)
+    loseAnimationDisplay();
   mouseCircle();
   setTimeout('draw()',(1000/FramePerSencond));
+}
+
+function tabInfoDisplay() {
+  try {
+    ctx.fillStyle = "rgba(0,0,0,180)";
+    ctx.fillRect(Window_width*0.1, Window_height*0.1, Window_width*0.8,Window_height*0.8)
+    ctx.textAlign = "left";
+    ctx.textBaseline = "middle";
+    ctx.font = "21px Verdana";
+
+    var temp = 0;
+    for (let [index,player] of Object.entries(playerlist_Now)) {
+      var temp_x = 0.2* Window_width;
+      var temp_y = 0.2* Window_height + 32*temp;
+      var msg = player['name']+"－擊殺數："+kdalist[index]['kill']+"－死亡數："+kdalist[index]['death']+"－輔助數："+kdalist[index]['support']
+      var txt_len = ctx.measureText(msg).width;
+      ctx.fillStyle = "rgba(16,16,16,0.4)";
+      ctx.fillRect(temp_x-6,temp_y+16,txt_len+14, 30)
+      ctx.fillStyle = "rgba(245,245,245,1)";
+      ctx.fillText(msg,temp_x+1,temp_y+32);
+      temp += 1;
+    }
+  } catch (e) {
+
+  }
+}
+
+function winAnimationDisplay() {
+  winAnimation += 1;
+  var temp_x = 0.5*Window_width-192;
+  var temp_y = 0.2*Window_height;
+  if(winAnimation < 50){
+    ctx.fillStyle = "rgba(0,0,0,"+winAnimation*3.5/255+")";
+    temp_y = 0.2*Window_height + 400 - winAnimation*8;
+  }
+  else{
+    ctx.fillStyle = "rgba(0,0,0,0.686)";
+    temp_y = 0.2*Window_height;
+  }
+  ctx.fillRect(0, 0, Window_width,Window_height);
+  for (var i = 0; i < 6; i++) {
+    var img = document.getElementById('wood_'+i);
+    ctx.drawImage(img,temp_x+64*i,temp_y,64,64);
+  }
+}
+
+function loseAnimationDisplay() {
+  loseAnimation += 1;
+  var temp_x = 0.5*Window_width-160;
+  var temp_y = 0.2*Window_height;
+  if(loseAnimation < 50){
+    ctx.fillStyle = "rgba(0,0,0,"+loseAnimation*3.5/255+")";
+    temp_y = 0.2*Window_height + 400 - loseAnimation*8;
+  }
+  else{
+    ctx.fillStyle = "rgba(0,0,0,0.686)";
+    temp_y = 0.2*Window_height;
+  }
+  ctx.fillRect(0, 0, Window_width,Window_height);
+  for (var i = 0; i < 5; i++) {
+    var img = document.getElementById('metal_'+i);
+    ctx.drawImage(img,temp_x+64*i,temp_y,64,64);
+  }
 }
 
 function emotionSelect(){
@@ -632,6 +703,39 @@ function particleDisplay() {
           temp_my = Math.sin(particle['y'+1.2]) * particle['time']*0.1;
           var img = document.getElementById('brickGrey');
           ctx.drawImage(img, particle['x'] - selfPlayer['x'] + (Window_width/2)-8+temp_mx,particle['y'] - selfPlayer['y'] + (Window_height/2)-8+temp_my,16,16);
+          break;
+        case 4:
+          var img = document.getElementById('hudPlayer_blue');
+          var tempB;
+          if(particle['time']> 500){
+            ctx.globalAlpha= (1-tempAlpha * (particle['time']-500)/500);
+            var tempB = 1;
+          }
+          var tempB = Math.pow(particle['time']/500,0.5);
+          for (var i = 0; i < 20; i++) {
+            var tempx = (Math.sin(i))*tempB*150;
+            var tempy = (Math.sin(i*1.4))*tempB*150;
+            ctx.drawImage(img, particle['x'] - selfPlayer['x'] + (Window_width/2)+tempx,particle['y'] - selfPlayer['y'] + (Window_height/2)+tempy,16,16);
+          }
+          if(distanceCount(particle['x'],particle['y'],selfPlayer['x'],selfPlayer['y']) < 900)
+            musicPlay('occupydown',HumanVolume);
+          break;
+        case 5:
+          var img = document.getElementById('hudPlayer_pink');
+          var tempB;
+          if(particle['time']> 500){
+            ctx.globalAlpha= (1-tempAlpha * (particle['time']-500)/500);
+            var tempB = 1;
+          }
+          var tempB = Math.pow(particle['time']/500,0.5);
+          for (var i = 0; i < 20; i++) {
+            var tempx = (Math.sin(i))*tempB*150;
+            var tempy = (Math.sin(i*1.4))*tempB*150;
+            ctx.drawImage(img, particle['x'] - selfPlayer['x'] + (Window_width/2)+tempx,particle['y'] - selfPlayer['y'] + (Window_height/2)+tempy,16,16);
+          }
+          if(distanceCount(particle['x'],particle['y'],selfPlayer['x'],selfPlayer['y']) < 900){
+            musicPlay('occupydown',HumanVolume);
+          }
           break;
         case 11:
           var img = document.getElementById('1_s1_icon');

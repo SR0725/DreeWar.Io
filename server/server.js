@@ -5,11 +5,16 @@ const io = require('socket.io')(server);
 
 //世界樹
 var occupyTime = 0; // -5 = blue 5 = red
+var eoccupyTime = 0; // -5 = blue 5 = red
 var foccupyTime = {}; // -5 = blue 5 = red
 foccupyTime[1] = 0; // -5 = blue 5 = red
 foccupyTime[2] = 0; // -5 = blue 5 = red
 foccupyTime[3] = 0; // -5 = blue 5 = red
 foccupyTime[4] = 0; // -5 = blue 5 = red
+foccupyTime[5] = 0; // -5 = blue 5 = red
+foccupyTime[6] = 0; // -5 = blue 5 = red
+foccupyTime[7] = 0; // -5 = blue 5 = red
+foccupyTime[8] = 0; // -5 = blue 5 = red
 var spawnTowerList = {}; // -5 = blue 5 = red
 spawnTowerList[0] = {x:129,y:1036,team:1};
 spawnTowerList[1] = {x:129,y:636,team:1};
@@ -24,6 +29,7 @@ var onlineCount = 0;      //遊戲人數
 var blueTeamCount = 0;    //藍隊人數
 var redTeamCount = 0;     //紅隊人數
 var playerlist = {};      //玩家列表與詳細資料
+var kdalist = {};      //玩家擊殺死亡與助攻統計
 var oplist = {};
 var skillObject = {};     //技能物件列表與鄉系資料
 var effectlist = {};      //效果列表與詳細資料
@@ -85,6 +91,11 @@ io.on('connection', (socket) => {
           speed : 6,
           damage:20,
           animation : 0
+        };
+        kdalist[socket.id] = {
+          kill : 0,
+          death : 0,
+          support : 0
         };
         if(blueTeamCount > redTeamCount){
           playerlist[socket.id]['team'] = 2;
@@ -224,6 +235,7 @@ io.on('connection', (socket) => {
         if(playerlist[socket.id].team == 2) redTeamCount -= 1;
         if(playerlist[socket.id].team == 1) blueTeamCount -= 1;
         delete playerlist[socket.id];
+        delete kdalist[socket.id];
         io.emit("playerDataUpdata", playerlist);
       } catch (e) {
       }
@@ -297,6 +309,37 @@ function mp_bp_Get() {
   bp2getTick += 20;
 }
 
+function deathDeal(deathplayer,killer,deathMessage){
+  var killerID = 'n';//找到殺手的後端ID
+  for (let [id ,player] of Object.entries(playerlist)) {
+    if(player['id'] == killer){
+      killerID = id;
+      break;
+    }
+  }
+  if(killerID != 'n'){
+    kdalist[killerID].kill += 1;
+    switch (deathMessage) {
+      case 0:
+        io.to('GameRoom').emit("msg", {message: playerlist[deathplayer]['name']+'被'+playerlist[killerID]['name']+'的火焰貫穿了!',name: '世界之聲',});//告知所有人死者死亡
+        break;
+      case 1:
+        io.to('GameRoom').emit("msg", {message: playerlist[deathplayer]['name']+'被'+playerlist[killerID]['name']+'招喚的地縫夾殺了!',name: '世界之聲',});//告知所有人死者死亡
+        break;
+      case 2:
+        io.to('GameRoom').emit("msg", {message: playerlist[deathplayer]['name']+'被'+playerlist[killerID]['name']+'重創致死了!',name: '世界之聲',});//告知所有人死者死亡
+        break;
+      default:
+    }
+  }else{
+    io.to('GameRoom').emit("msg", {message: playerlist[deathplayer]['name']+'在火焰升天!',name: '世界之聲',});//告知所有人死者死亡
+  }
+  kdalist[deathplayer].death += 1;//KDA加成
+  io.to(deathplayer).emit("die");//告知死者死亡
+  playerlist[deathplayer]['health'] = 100;//重製死者狀態
+  io.to("GameRoom").emit("kdaDataGet", kdalist);//更新KDA版
+}
+
 function dataDeal_Skill() {
   for (let [index, object] of Object.entries(skillObject)) {
     if(object['time'] < object['maintime']){
@@ -314,9 +357,7 @@ function dataDeal_Skill() {
                   io.to('GameRoom').emit("particleDataGet",{particle:1,time:1,maintime:300,x:object['x'],y:object['y']});
                   io.to(id).emit("hurt");
                   if(player['health'] <= 0){
-                    io.to(id).emit("die");
-                    io.to('GameRoom').emit("msg", {message: player['name']+'被'+object['name']+'的火焰貫穿了!',name: '世界之聲',});
-                    player['health'] = 100;
+                    deathDeal(id,object['id'],0);
                   }
                   delete skillObject[index];
                   break;
@@ -329,9 +370,7 @@ function dataDeal_Skill() {
                   io.to('GameRoom').emit("particleDataGet",{particle:1,time:1,maintime:300,x:object['x'],y:object['y']});
                   io.to(id).emit("hurt");
                   if(player['health'] <= 0){
-                    io.to(id).emit("die");
-                    player['health'] = 100;
-                    io.to('GameRoom').emit("msg", {message: player['name']+'在'+object['name']+'引起的爆炸中死去!',name: '世界之聲',});
+                    deathDeal(id,object['id'],0);
                   }
                   delete skillObject[index];
                   break;
@@ -378,9 +417,7 @@ function dataDeal_Skill() {
                     };
                     effectindex += 1;
                     if(player['health'] <= 0){
-                      io.to(id).emit("die");
-                      player['health'] = 100;
-                      io.to('GameRoom').emit("msg", {message: player['name']+'窒息於'+object['name']+'招喚的地殼裂痕中!',name: '世界之聲',});
+                      deathDeal(id,object['id'],1);
                     }
                     delete skillObject[index];
                     break;
@@ -407,9 +444,7 @@ function dataDeal_Skill() {
                     };
                     effectindex += 1;
                     if(player['health'] <= 0){
-                      io.to(id).emit("die");
-                      player['health'] = 100;
-                      io.to('GameRoom').emit("msg", {message: player['name']+'窒息於'+object['name']+'招喚的地殼裂痕中!',name: '世界之聲',});
+                      deathDeal(id,object['id'],1);
                     }
                     delete skillObject[index];
                     break;
@@ -459,9 +494,7 @@ function dataDeal_Effect() {
                 player['health'] -= object['level'];
                 io.to(id).emit("hurt");
                 if(player['health'] <= 0){
-                  io.to(id).emit("die");
-                  player['health'] = 100;
-                  io.to('GameRoom').emit("msg", {message: player['name']+'被'+object['name']+'重擊致死!',name: '世界之聲',});
+                  deathDeal(id,object['id'],2);
                 }
                 break;
               default:
@@ -523,7 +556,7 @@ function gameSystem() {
       }
     }
     //青蛙1
-    else if(player['x'] < 1700 && player['x'] > 1500 && player['y'] < 400 && player['y'] > 281){
+    else if(player['x'] < 1750 && player['x'] > 1450 && player['y'] < 400 && player['y'] > 281){
       if(player['team'] == 1){
         foccupyTime[1] -= 1;
       }else{
@@ -531,7 +564,7 @@ function gameSystem() {
       }
     }
     //青蛙2
-    else if(player['x'] < 1700 && player['x'] > 1500 && player['y'] < 1260 && player['y'] > 1100){
+    else if(player['x'] < 1750 && player['x'] > 1450 && player['y'] < 1260 && player['y'] > 1100){
       if(player['team'] == 1){
         foccupyTime[2] -= 1;
       }else{
@@ -539,7 +572,7 @@ function gameSystem() {
       }
     }
     //青蛙3
-    else if(player['x'] < 2792 && player['x'] > 2547 && player['y'] < 400 && player['y'] > 281){
+    else if(player['x'] < 2842 && player['x'] > 2500 && player['y'] < 400 && player['y'] > 281){
       if(player['team'] == 1){
         foccupyTime[3] -= 1;
       }else{
@@ -547,7 +580,7 @@ function gameSystem() {
       }
     }
     //青蛙4
-    else if(player['x'] < 2792 && player['x'] > 2547 && player['y'] < 1260 && player['y'] > 1100){
+    else if(player['x'] < 2842 && player['x'] > 2500 && player['y'] < 1260 && player['y'] > 1100){
       if(player['team'] == 1){
         foccupyTime[4] -= 1;
       }else{
@@ -566,8 +599,60 @@ function gameSystem() {
   if(occupyTime == 5) redscore += 1;
   //判斷勝負
   if(bluescore >= winscore){
+    for (let [id ,player] of Object.entries(playerlist)) {
+      if(player['team'] == 1)
+        io.to(id).emit("winGame");
+      else
+        io.to(id).emit("loseGame");
+    }
+    gamestat = 3;
   }else if(redscore >= winscore){
+    for (let [id ,player] of Object.entries(playerlist)) {
+      if(player['team'] == 2)
+        io.to(id).emit("winGame");
+      else
+        io.to(id).emit("loseGame");
+    }
+    gamestat = 3;
   }
+  //佔領成功粒子特效
+  for (var i = 1; i <= 4; i++) {
+    var temp_x;
+    var temp_y;
+
+    switch (i) {
+      case 1:
+        temp_x = 1614;
+        temp_y = 361;
+        break;
+      case 2:
+        temp_x = 1614;
+        temp_y = 1212;
+        break;
+      case 3:
+        temp_x = 2692;
+        temp_y = 361;
+        break;
+      case 4:
+        temp_x = 2692;
+        temp_y = 1212;
+        break;
+      default:
+
+    }
+    if(foccupyTime[i] == 3 && foccupyTime[i+4] != foccupyTime[i]){
+      io.to('GameRoom').emit("particleDataGet",{particle:5,time:1,maintime:1000,x:temp_x,y:temp_y});
+    }else if(foccupyTime[i] == -3 && foccupyTime[i+4] != foccupyTime[i]){
+      io.to('GameRoom').emit("particleDataGet",{particle:4,time:1,maintime:1000,x:temp_x,y:temp_y});
+    }
+    foccupyTime[i+4] = foccupyTime[i];
+  }
+  if(occupyTime == 5 && occupyTime != eoccupyTime){
+    io.to('GameRoom').emit("particleDataGet",{particle:5,time:1,maintime:1000,x:2130,y:696});
+  }else if(occupyTime == -5 && occupyTime != eoccupyTime){
+    io.to('GameRoom').emit("particleDataGet",{particle:4,time:1,maintime:1000,x:2130,y:696});
+  }
+  eoccupyTime = occupyTime;
   //青蛙攻擊
   if(occupyTime == -5){
     for (var i = 1; i <= 4; i++) {
@@ -637,7 +722,7 @@ function gameUpdate(){
   //建築效果施加
   dataDeal_Building();
   //遊戲核心系統
-  if(gametick % 50 == 1)
+  if(gametick % 50 == 1 && gamestat != 3)
     gameSystem();
   gametick+=1;//遊戲刻增加
   skillObject['tick'] = gametick;//註上發送戳記以方便客戶端判斷資料完整性
@@ -750,6 +835,9 @@ function commandTest(msg,id){
                   case 'bpBasicRegMul':
                     io.to(id).emit("msg", {message:'bp獲得時間基礎值為'+bpBasicRegMul,name: '世界之聲'});
                     break;
+                  case 'winScore':
+                    io.to(id).emit("msg", {message:'勝利分數為'+winscore,name: '世界之聲'});
+                    break;
                   default:
                     io.to(id).emit("msg", {message:'查無此世界參數',name: '世界之聲'});
                     break;
@@ -772,6 +860,10 @@ function commandTest(msg,id){
                     bpBasicRegMul = command[3];
                     io.to(id).emit("msg", {message:'蜂之園生產倍率基數更改為'+bpBasicRegMul,name: '世界之聲'});
                     break;
+                  case 'winScore':
+                    winscore = command[3];
+                    io.to(id).emit("msg", {message:'勝利分數為'+winscore,name: '世界之聲'});
+                    break;
                   default:
                     io.to(id).emit("msg", {message:'查無此世界參數',name: '世界之聲'});
                     break;
@@ -786,6 +878,13 @@ function commandTest(msg,id){
             if(oplist[id] == true){
               password = command[1];
               io.to(id).emit("msg", {message: '密碼已更正成:'+command[1],name: '世界之聲'});
+            }else{
+              io.to(id).emit("msg", {message: '你的權限無法使用該指令!',name: '世界之聲'});
+            }
+            break;
+          case 'restart':
+            if(oplist[id] == true){
+              io.emit("restartGame");
             }else{
               io.to(id).emit("msg", {message: '你的權限無法使用該指令!',name: '世界之聲'});
             }
@@ -839,6 +938,7 @@ function shoot(bx,by,px,py,team,damage){
 function gameStart(){
   io.to("GameRoom").emit("playerCount",onlineCount);
   io.to("GameRoom").emit("gameStart");
+  io.to("GameRoom").emit("kdaDataGet", kdalist);//更新KDA版
   gamestat = 2;
   setInterval(gameUpdate,20);
   console.log('遊戲開始');

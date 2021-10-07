@@ -24,7 +24,9 @@ $( function() {
       {label: '/gameval set mpBasicRegVal'},
       {label: '/gameval set bpBasicRegVal'},
       {label: '/gameval get bpBasicRegVal'},
-      {label: '/gameval get mpBasicRegVal'}
+      {label: '/gameval get mpBasicRegVal'},
+      {label: '/gameval get winScore'},
+      {label: '/restart'}
     ],
     create: function (event, ui) {
       $(this).data('ui-autocomplete')._renderItem  = function (ul, item) {
@@ -73,6 +75,9 @@ document.onkeydown=function(event){
             skillCardUse();
           }
         }
+        break;
+      case 9:
+        tabUse = true;
         break;
       case 69:
         if(gamestat == 2){
@@ -140,6 +145,9 @@ document.onkeyup=function(event){
       case 68:
         key_d = false;
         break;
+      case 9:
+        tabUse = false;
+        break;
       default:
     }
   }
@@ -168,6 +176,20 @@ document.onmouseup=function(event){
       }
     }
   }
+};
+
+document.onmousewheel=function(event){
+  if(event.wheelDelta > 0 || event.detail < 0){
+    cardchoose -= 1;
+    if(cardchoose < 0) cardchoose = 3;
+    for (var i = 0; i < 4; i++) $('#card'+i.toString()).rotate({angle:0});
+    $('#card'+cardchoose).rotate({animateTo:15,duration: 200});
+	}else{
+    cardchoose += 1;
+    if(cardchoose > 3) cardchoose = 0;
+    for (var i = 0; i < 4; i++) $('#card'+i.toString()).rotate({angle:0});
+    $('#card'+cardchoose).rotate({animateTo:15,duration: 200});
+	}
 };
 
 function gameMouseInput(){

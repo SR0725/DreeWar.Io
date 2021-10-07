@@ -33,6 +33,10 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   })//獲取玩家資料;
 
+  socket.on("kdaDataGet", function (d) {
+    kdalist = d;
+  })//獲取玩家KDA資料;
+
   socket.on("skillDataGet", function (d) {
     skillObjectlist_buffer = d;
   });//獲取技能資料
@@ -82,10 +86,26 @@ document.addEventListener("DOMContentLoaded", () => {
     foccupyTime = msg.foccupyTime;
   });
 
+  socket.on("loseGame", function () {
+    loseAnimation = 1;
+    musicPlay('loser',HumanVolume);
+  });
+
+  socket.on("winGame", function () {
+    winAnimation = 1;
+    musicPlay('winner',HumanVolume);
+  });
+
+  socket.on("restartGame", function () {
+    window.location.href=window.location.href;
+    window.location.reload;
+  });
+
   socket.on("die", function () {
     selfPlayer['x'] = -3000;
     selfPlayer['y'] = 0;
     respawnTime = 500;
+    musicPlay('you_lose',HumanVolume);
     ActionBarShow('你死掉了!請等待十秒復活!');
   });//死去
 

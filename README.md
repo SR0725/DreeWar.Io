@@ -33,19 +33,19 @@
 **世界之樹**（位於地圖中央）
 遊戲的核心目標，佔領後可以為自己隊伍加分
 佔領時間為５秒
-![](https://i.imgur.com/YV8CwHj.png =256x)
+![](https://i.imgur.com/YV8CwHj.png)
 
 
 **噴蛙**（共四個，圍繞在世界之樹旁）
      佔領後，可以對世界之樹內部的敵方守軍產生打擊
      每秒向世界樹散彈打出２顆傷害５點的蛙彈
      佔領時間為３秒
-![](https://i.imgur.com/HCemhEE.png =256x)
+![](https://i.imgur.com/HCemhEE.png)
 
 
 **隊伍重生點**（藍隊點位於最左方 紅隊點位於最右方）
      玩家死後重生之地,各自駐紮有兩個砲台防禦 ,砲台無敵,攻擊為４０血量
-![](https://i.imgur.com/SJ09jl0.png =256x)
+![](https://i.imgur.com/SJ09jl0.png)
 
 **遊戲目標是佔領世界之樹，每隔１秒加１分
 ３００分即勝利**
@@ -79,11 +79,11 @@
 
 |**名稱**|蜂之園|磚牆|砲台|花園|工蜂哨|
 |--------| -------- | -------- | -------- | -------- | -------- |
-|消耗|３![](https://i.imgur.com/Y1CQlhk.png =15x)|１![](https://i.imgur.com/Y1CQlhk.png =15x)|２![](https://i.imgur.com/Y1CQlhk.png =15x)|３![](https://i.imgur.com/Y1CQlhk.png =15x)|３![](https://i.imgur.com/Y1CQlhk.png =15x)|
+|消耗|３![](https://i.imgur.com/Y1CQlhk.png)|１![](https://i.imgur.com/Y1CQlhk.png)|２![](https://i.imgur.com/Y1CQlhk.png)|３![](https://i.imgur.com/Y1CQlhk.png)|３![](https://i.imgur.com/Y1CQlhk.png)|
 |功能|能加速生成ＢＰ產量！每多一個蜜蜂園能使生產時間減少２０％|能夠阻擋子彈或者是技能攻擊（不論敵我）|能夠遠程攻擊附近的敵人|能加速生成MP產量！每多一個花園能使生產時間減少２０％|在附近的玩家（不論敵我）能回復每秒０.５點的血量|
 |血量|２０|１００|５０|２０|５０|
 |其他|||傷害：１０射速為三秒一發|||
-|卡牌|![](https://i.imgur.com/vhDXqUd.png =100x)|![](https://i.imgur.com/gXAVJuu.png =100x)|![](https://i.imgur.com/qX9GlVH.png =100x)|![](https://i.imgur.com/XWNi3UP.png =100x)|![](https://i.imgur.com/hEQMjLG.png =100x)
+|卡牌|![](https://i.imgur.com/vhDXqUd.png)|![](https://i.imgur.com/gXAVJuu.png)|![](https://i.imgur.com/qX9GlVH.png)|![](https://i.imgur.com/XWNi3UP.png)|![](https://i.imgur.com/hEQMjLG.png)
 |
 
 * **普攻牌組**
@@ -122,7 +122,7 @@
 | **狂暴** | **地裂** | 猛擒 |
 | -------- | -------- | -------- |
 | 能提高自身傷害並減慢附近敵人的移動速度|打出一道地上斷層攻擊敵人,受攻擊玩家會有極短暫的無法移動|飛撲向最近的玩家(無距離限制),並使得他受到大幅傷害並提升我方攻擊,不過移動速度會減慢|
-| ![](https://i.imgur.com/fTD0c7r.png =100x)|![](https://i.imgur.com/o0f0GDW.png =100x)|![](https://i.imgur.com/RqS7SGM.png =100x)|
+| ![](https://i.imgur.com/fTD0c7r.png)|![](https://i.imgur.com/o0f0GDW.png)|![](https://i.imgur.com/RqS7SGM.png)|
 
 ### **設置**
 面對不同操縱習慣的玩家，遊戲能自訂義你所擅長的操作方式

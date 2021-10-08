@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="zh-tw">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DreeWar.io</title>
+
+    <link rel="stylesheet" href="index.css" />
+  	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+  	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">.
+
+</head>
+<body style="background-color:#121212;" oncontextmenu="window.event.returnValue=false;">
+  <div class="position-absolute top-50 start-50 translate-middle" id="MainSence">
+    <div style="width: 600px;">
+      <div class="input-group" id="chat-box">
+        <div class="container">
+          <div class="row">
+            <div class="col align-self-center">
+              <div class="col-12">
+                <input id="name_message" type="text" class="form-control text-light bg-dark" placeholder="請輸入暱稱" aria-label="請輸入暱稱" aria-describedby="basic-addon1">
+              </div>
+            </div>
+          </div>
+          <br><br>
+          <div>
+            <div class="position-absolute top-100 start-50 translate-middle">
+              <button id="login-game" type="button" class="btn btn-light btn-lg text-success">登入遊戲</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="fixed-top">
+    <div align="right">
+      <button onclick="javascript:this.style.display='none'" id="talkroomOpen"  style="display: none;" class="btn btn-dark btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#chat_box_collapse" aria-expanded="false" aria-controls="chat_box_collapse">
+        <span class="input-group-text text-light bg-dark" id="basic-addon1"><i class="fas fa-comments"></i></span>
+      </button>
+      <div style="min-height: 120px;">
+        <div class="collapse collapse-horizontal show" id="chat_box_collapse">
+          <div id="message-box"  style="width:25vw;">
+            <div class="input-group" id="chat-box" style="z-index: 10;">
+              <span class="input-group-text text-light bg-dark" id="basic-addon1">
+                <button onclick="javascript:document.getElementById('talkroomOpen').style.display='block'" class="btn-close btn-close-white" type="button" data-bs-toggle="collapse" data-bs-target="#chat_box_collapse" aria-expanded="false" aria-controls="chat_box_collapse">
+                </button>
+              </span>
+              <input id="message" type="text" class="form-control text-light bg-dark" placeholder="聊天欄" aria-label="聊天欄" aria-describedby="basic-addon1" autocomplete="off">
+            </div>
+            <div class="msg-bg"></div>
+            <div id="msg" align="left"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="fixed-top" style="width:10vw;">
+    <div align="left">
+
+      <button type="button" class="btn btn-dark btn-sm" data-bs-toggle="modal" data-bs-target="#setBoxOpen">
+        <span class="input-group-text text-light bg-dark" id="basic-addon1"><i class="fas fa-cog"></i></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Setting -->
+  <div style="width: 82vw;" class="modal fade" id="setBoxOpen" tabindex="-1" aria-labelledby="setBoxOpenLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content bg-dark" class="mx-auto" style="width: 55vw;">
+        <div id="set-box" class="mx-auto" style="width: 52vw;">
+          <div class="rounded text-light bg-dark" id="basic-addon1">
+            <hr>
+            <span class="input-group-text text-light bg-dark" id="basic-addon1" style="width:50px;">
+              <button class="btn-close btn-close-white" type="button" data-bs-toggle="collapse" data-bs-dismiss="modal">
+              </button>
+            </span>
+            <hr>
+            <strong>卡牌施放模式</strong>
+            <div class="container">
+              <div class="row align-items-start">
+                <div class="col form-check">
+                  <input class="form-check-input" type="radio" name="flexRadioDefault" id="CardUseMode_0">
+                  <label class="form-check-label" for="flexRadioDefault2">
+                    QERF對應四個鍵位進行施放
+                  </label>
+                </div>
+                <div class="col form-check">
+                  <input class="form-check-input" type="radio" name="flexRadioDefault" id="CardUseMode_1" checked>
+                  <label class="form-check-label" for="flexRadioDefault1">
+                    滾輪(或者QE鍵)更換施放卡牌 滑鼠左鍵(或者Space鍵)施放
+                  </label>
+                </div>
+              </div>
+            </div>
+            <hr>
+          </div>
+          <div class="rounded text-light bg-dark" id="basic-addon1">
+            <hr>
+            <strong>顯示設定</strong>
+            <div class="container">
+              <div class="row align-items-start">
+                <div class="form-check form-switch">
+                  <label for="fpsRange" class="form-label">FPS最大值設置:<label id="fpsValue">50</label></label>
+                  <input type="range" class="form-range" min="10" max="150" id="fpsRange" value="50">
+                </div>
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" value="" id="displayWaveCheck" checked>
+                  <label class="form-check-label" for="displayWaveCheck">
+                    是否顯示波浪
+                  </label>
+                </div>
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" value="" id="displayBuildingHpCheck" checked>
+                  <label class="form-check-label" for="displayBuildingHpCheck">
+                    顯示建築血量條
+                  </label>
+                </div>
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" value="" id="displayBuildingMistCheck" checked>
+                  <label class="form-check-label" for="displayBuildingMistCheck">
+                    顯示建築迷霧(遠方的建築不會被顯示)
+                  </label>
+                </div>
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" value="" id="displayMouseCircleWithoutDelayCheck">
+                  <label class="form-check-label" for="displayMouseCircleWithoutDelayCheck">
+                    滑鼠旋轉粒子特效移動動畫
+                  </label>
+                </div>
+              </div>
+            </div>
+            <hr>
+          </div>
+          <div class="rounded text-light bg-dark" id="basic-addon1">
+            <hr>
+            <strong>音效設定</strong>
+            <div class="container">
+              <div class="row align-items-start">
+                <div class="form-check form-switch">
+                  <label for="MainVolumeRange" class="form-label">主音量<label id="MainVolumeValue">40</label></label>
+                  <input type="range" class="form-range" min="0" max="100" id="MainVolumeRange" value="40">
+                </div>
+                <div class="row justify-content-center">
+                  <div class="col-6">
+                    <div class="form-check form-switch">
+                      <label for="BGMVolumeRange" class="form-label">背景音樂<label id="BGMVolumeValue">10</label></label>
+                      <input type="range" class="form-range" min="0" max="100" id="BGMVolumeRange" value="10">
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="form-check form-switch">
+                      <label for="ShootVolumeRange" class="form-label">射擊聲<label id="ShootVolumeValue">30</label></label>
+                      <input type="range" class="form-range" min="0" max="100" id="ShootVolumeRange" value="30">
+                    </div>
+                  </div>
+                </div>
+                <div class="row justify-content-center">
+                  <div class="col-6">
+                    <div class="form-check form-switch">
+                      <label for="UIVolumeRange" class="form-label">UI點擊<label id="UIVolumeValue">100</label></label>
+                      <input type="range" class="form-range" min="0" max="100" id="UIVolumeRange" value="100">
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="form-check form-switch">
+                      <label for="HumanVolumeRange" class="form-label">人物聲音<label id="HumanVolumeValue">100</label></label>
+                      <input type="range" class="form-range" min="0" max="100" id="HumanVolumeRange" value="100">
+                    </div>
+                  </div>
+                </div>
+                <div class="row justify-content-center">
+                  <div class="col-6">
+                    <div class="form-check form-switch">
+                      <label for="BoomVolumeRange" class="form-label">爆炸音效<label id="BoomVolumeValue">100</label></label>
+                      <input type="range" class="form-range" min="0" max="100" id="BoomVolumeRange" value="100">
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="form-check form-switch">
+                      <label for="FootVolumeRange" class="form-label">腳步聲<label id="FootVolumeValue">10</label></label>
+                      <input type="range" class="form-range" min="0" max="100" id="FootVolumeRange" value="10">
+                    </div>
+                  </div>
+                </div>
+                <div class="row justify-content-center">
+                  <div class="col-6">
+                    <div class="form-check form-switch">
+                      <label for="BuildVolumeRange" class="form-label">建築音效<label id="BuildVolumeValue">100</label></label>
+                      <input type="range" class="form-range" min="0" max="100" id="BuildVolumeRange" value="100">
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="form-check form-switch">
+                      <label for="VolumeRange" class="form-label">腳步聲<label id="VolumeValue">100</label></label>
+                      <input type="range" class="form-range" min="0" max="100" id="VolumeRange" value="1000">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <hr>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="fixed-bottom">
+    <!--
+    <button style="display:block;" onclick="javascript:phone_open()" class="btn btn-close-white" type="button" id="phone_open">
+      <i class="fas fa-gamepad">手機搖桿開啟</i>
+    </button>
+    <button style="display:none;" onclick="javascript:phone_close()" class="btn btn-close-white" type="button" id="phone_close">
+      <i class="fas fa-gamepad">手機搖桿關閉</i>
+    </button>
+    <div id="phoneControl" style="display:none;">
+      <div align="left">
+        <div class="container">
+          <div class="row">
+            <div class="col-1"></div>
+            <div class="col-1"><button class="btn btn-primary btn-lg" ontouchstart="up()" ontouchend="stopup()" ontouchstart="moveup()">🔼</button></div>
+            <div class="col-1"></div>
+          </div>
+          <div class="row">
+            <div class="col-1"><button class="btn btn-primary btn-lg" ontouchstart="left()" ontouchend="stopleft()" ontouchstart="moveleft()">◀</button></div>
+            <div class="col-1"></div>
+            <div class="col-1"><button class="btn btn-primary btn-lg" ontouchstart="right()" ontouchend="stopright()" ontouchstart="moveright()">▶</button></div>
+          </div>
+          <div class="row">
+            <div class="col-1"></div>
+            <div class="col-1"><button class="btn btn-primary btn-lg" ontouchstart="down()" ontouchend="stopdown()" ontouchstart="movedown()">🔽</button></div>
+            <div class="col-1"></div>
+          </div>
+          <div class="row">
+            <br>
+          </div>
+        </div>
+      </div>
+    </div>
+    -->
+    <div align="left">
+      <div id="cardUseAnimation"></div>
+    </div>
+    <div align="left">
+      <div class="row align-items-start" id="card">
+
+      </div>
+    </div>
+  </div>
+  <canvas id="obs_map" width="4230" height="1650" style="display: none;"></canvas>
+  <div style="display:none">
+    <!--場景設定-->
+    <img src="views/img/obs.png" id="obs">
+    <img src="views/img/scence.png" id="scence">
+    <!--背景-->
+    <img src="views/img/blue_desert.png" id="blue_desert">
+    <!--裝飾物-->
+    <img src="views/img/waveWater.png" id="waveWater">
+    <img src="views/img/midtree.png" id="midtree">
+    <img src="views/img/frog.png" id="frog">
+    <img src="views/img/frog_t.png" id="frog_t">
+
+    <!--粒子-->
+    <img src="views/img/fireball.png" id="fireball">
+    <img src="views/img/brickBrown.png" id="brickBrown">
+    <img src="views/img/brickGrey.png" id="brickGrey">
+
+    <!--玩家動畫-->
+    <img src="views/img/Blue/alienBlue_front.png" id="alienBlue_front">
+    <img src="views/img/Blue/alienBlue_walk1.png" id="alienBlue_walk1">
+    <img src="views/img/Blue/alienBlue_walk2.png" id="alienBlue_walk2">
+    <img src="views/img/Blue/alienBlue_duck.png" id="alienBlue_duck">
+
+    <img src="views/img/Pink/alienPink_front.png" id="alienPink_front">
+    <img src="views/img/Pink/alienPink_walk1.png" id="alienPink_walk1">
+    <img src="views/img/Pink/alienPink_walk2.png" id="alienPink_walk2">
+    <img src="views/img/Pink/alienPink_duck.png" id="alienPink_duck">
+
+    <!--爆炸動畫-->
+    <div>
+      <img src="views/img/particle/explosion_1.png" id="explosion_0">
+      <img src="views/img/particle/explosion_1.png" id="explosion_1">
+      <img src="views/img/particle/explosion_2.png" id="explosion_2">
+      <img src="views/img/particle/explosion_3.png" id="explosion_3">
+      <img src="views/img/particle/explosion_4.png" id="explosion_4">
+      <img src="views/img/particle/explosion_5.png" id="explosion_5">
+      <img src="views/img/particle/explosion_6.png" id="explosion_6">
+    </div>
+
+    <!--狀態效果-->
+    <img src="views/img/effect/1.png" id="effect1">
+    <img src="views/img/effect/2.png" id="effect2">
+
+    <!--UI-->
+    <img src="views/img/hp.png" id="hp">
+    <img src="views/img/hp_e.png" id="hp_e">
+    <img src="views/img/mp.png" id="mp">
+    <img src="views/img/mp_e.png" id="mp_e">
+    <img src="views/img/bp_s.png" id="bp_s">
+    <img src="views/img/mp_s.png" id="mp_s">
+    <img src="views/img/hp_s.png" id="hp_s">
+    <img src="views/img/UI/Bar.png" id="Bar">
+    <img src="views/img/UI/bp0.png" id="bp0">
+    <img src="views/img/UI/bp1.png" id="bp1">
+    <img src="views/img/UI/bp2.png" id="bp2">
+    <img src="views/img/UI/bp3.png" id="bp3">
+    <img src="views/img/UI/box.png" id="box">
+    <img src="views/img/UI/occupy_stone.png" id="occupy_stone">
+
+    <img src="views/img/UI/hudPlayer_blue.png" id="hudPlayer_blue">
+    <img src="views/img/UI/hudPlayer_pink.png" id="hudPlayer_pink">
+    <img src="views/img/UI/hudPlayer_mid.png" id="hudPlayer_mid">
+
+    <!--技能施放-->
+    <img src="views/img/skill/s0.png" id="s0_icon">
+    <img src="views/img/skill/1_s1.png" id="1_s1_icon">
+    <img src="views/img/skill/1_s2.png" id="1_s2_icon">
+    <img src="views/img/skill/1_s3.png" id="1_s3_icon">
+    <img src="views/img/skill/b_beegen.png" id="b_beegen">
+    <img src="views/img/skill/b_flowergen.png" id="b_flowergen">
+    <img src="views/img/skill/b_fort.png" id="b_fort">
+    <img src="views/img/skill/b_hptower.png" id="b_hptower">
+    <img src="views/img/skill/b_wall.png" id="b_wall">
+
+    <!--建築-->
+    <img src="views/img/build/beegen_blue.png" id="beegen_blue">
+    <img src="views/img/build/beegen_red.png" id="beegen_red">
+    <img src="views/img/build/flowergen_blue.png" id="flowergen_blue">
+    <img src="views/img/build/flowergen_red.png" id="flowergen_red">
+    <img src="views/img/build/fort_blue.png" id="fort_blue">
+    <img src="views/img/build/fort_red.png" id="fort_red">
+    <img src="views/img/build/hptower.png" id="hptower">
+    <img src="views/img/build/hptower_animation.png" id="hptower_animation">
+    <img src="views/img/build/wall.png" id="wall">
+    <img src="views/img/build/obsSum.png" id="obsSum">
+    <img src="views/img/build/obsDel.png" id="obsDel">
+    <!--emotion-->
+    <img src="views/img/emotion/emote_1.png" id="emote_1">
+    <img src="views/img/emotion/emote_2.png" id="emote_2">
+    <img src="views/img/emotion/emote_3.png" id="emote_3">
+    <img src="views/img/emotion/emote_4.png" id="emote_4">
+    <img src="views/img/emotion/emote_5.png" id="emote_5">
+    <img src="views/img/emotion/emote_6.png" id="emote_6">
+    <img src="views/img/emotion/emote_7.png" id="emote_7">
+    <img src="views/img/emotion/emoteUI_1.png" id="emoteUI_1">
+    <img src="views/img/emotion/emoteUI_2.png" id="emoteUI_2">
+    <img src="views/img/emotion/emoteUI_3.png" id="emoteUI_3">
+    <img src="views/img/emotion/emoteUI_4.png" id="emoteUI_4">
+    <img src="views/img/emotion/emoteUI_5.png" id="emoteUI_5">
+    <img src="views/img/emotion/emoteUI_6.png" id="emoteUI_6">
+    <img src="views/img/emotion/emoteUI_7.png" id="emoteUI_7">
+
+    <img src="views/img/UI/wood_W.png" id="wood_0">
+    <img src="views/img/UI/wood_I.png" id="wood_1">
+    <img src="views/img/UI/wood_N.png" id="wood_2">
+    <img src="views/img/UI/wood_N.png" id="wood_3">
+    <img src="views/img/UI/wood_E.png" id="wood_4">
+    <img src="views/img/UI/wood_R.png" id="wood_5">
+    <img src="views/img/UI/wood_T.png" id="wood_T">
+    <img src="views/img/UI/wood_I.png" id="wood_I">
+    <img src="views/img/UI/wood_P.png" id="wood_P">
+
+    <img src="views/img/UI/metal_L.png" id="metal_0">
+    <img src="views/img/UI/metal_O.png" id="metal_1">
+    <img src="views/img/UI/metal_S.png" id="metal_2">
+    <img src="views/img/UI/metal_E.png" id="metal_3">
+    <img src="views/img/UI/metal_R.png" id="metal_4">
+    <img src="views/img/UI/panel.png" id="UIpanel">
+    <img src="views/img/UI/next.png" id="UInext">
+    <img src="views/img/UI/cross.png" id="UIcross">
+
+  </div>
+  <div id="MusicList">
+    <audio id="Music_click">
+      <source = src="views/audio/button/click.ogg" type="audio/ogg">
+    </audio>
+    <audio id="Music_switch">
+      <source = src="views/audio/button/switch.ogg" type="audio/ogg">
+    </audio>
+    <audio id="Music_rollover">
+      <source = src="views/audio/button/rollover.ogg" type="audio/ogg">
+    </audio>
+    <audio id="Music_mouserelease">
+      <source = src="views/audio/button/mouserelease.ogg" type="audio/ogg">
+    </audio>
+    <audio id="begin">
+      <source = src="views/audio/game/begin.ogg" type="audio/ogg">
+    </audio>
+    <audio id="prepare_yourself">
+      <source = src="views/audio/game/prepare_yourself.ogg" type="audio/ogg">
+    </audio>
+    <audio id="tie_breaker">
+      <source = src="views/audio/game/tie_breaker.ogg" type="audio/ogg">
+    </audio>
+    <audio id="time">
+      <source = src="views/audio/game/time.ogg" type="audio/ogg">
+    </audio>
+    <audio id="footstep_0">
+      <source = src="views/audio/game/footstep_0.ogg" type="audio/ogg">
+    </audio>
+    <audio id="footstep_1">
+      <source = src="views/audio/game/footstep_1.ogg" type="audio/ogg">
+    </audio>
+    <audio id="footstep_2">
+      <source = src="views/audio/game/footstep_2.ogg" type="audio/ogg">
+    </audio>
+    <audio id="footstep_3">
+      <source = src="views/audio/game/footstep_3.ogg" type="audio/ogg">
+    </audio>
+    <audio id="footstep_4">
+      <source = src="views/audio/game/footstep_4.ogg" type="audio/ogg">
+    </audio>
+    <audio id="footstep_5">
+      <source = src="views/audio/game/footstep_5.ogg" type="audio/ogg">
+    </audio>
+    <audio id="footstep_6">
+      <source = src="views/audio/game/footstep_6.ogg" type="audio/ogg">
+    </audio>
+    <audio id="footstep_7">
+      <source = src="views/audio/game/footstep_7.ogg" type="audio/ogg">
+    </audio>
+    <audio id="footstep_8">
+      <source = src="views/audio/game/footstep_8.ogg" type="audio/ogg">
+    </audio>
+    <audio id="footstep_9">
+      <source = src="views/audio/game/footstep_9.ogg" type="audio/ogg">
+    </audio>
+    <audio id="fireball_shoot">
+      <source = src="views/audio/game/fireball.ogg" type="audio/ogg">
+    </audio>
+    <audio id="boom">
+      <source = src="views/audio/game/boom.ogg" type="audio/ogg">
+    </audio>
+    <audio id="building">
+      <source = src="views/audio/game/building.ogg" type="audio/ogg">
+    </audio>
+    <audio id="occupydown">
+      <source = src="views/audio/game/occupydown.ogg" type="audio/ogg">
+    </audio>
+    <audio id="you_lose">
+      <source = src="views/audio/game/you_lose.ogg" type="audio/ogg">
+    </audio>
+    <audio id="winner">
+      <source = src="views/audio/game/winner.ogg" type="audio/ogg">
+    </audio>
+    <audio id="loser">
+      <source = src="views/audio/game/loser.ogg" type="audio/ogg">
+    </audio>
+  </div>
+  <script>
+    const PI = 3.1415926;
+    const id = Date.now().toString();//獲取前端ID
+
+    var occupyTime = 0; // -5 = blue 5 = red
+    var bluescore = 0;
+    var redscore = 0;
+    var foccupyTime = {};//宣告粒子
+
+
+    var race = 1;//種族類別
+    var msgBox = $('#msg');//聊天欄
+    var socket = io();//取得socket包
+    var particlelist = {};//宣告粒子
+    var effectlist = {};
+    var playerlist = {};
+    var playerlistPos_buffer = {};
+    var kdalist = {};
+    var playerlistPos = {};
+    var buildinglist = {};
+    var card = {};
+    var playerlist_Now = {};
+    var playerlist_buffer = {};
+    var playerlist_UT = 0;
+    var skillObjectlist = {};
+    var SkillObject;
+    var skillObjectlist_Now = {};
+    var skillObjectlist_buffer = {};
+    var skillObjectlist_UT = 0;
+    var emotionList = {};
+    var fps = 50;//FPSDisplayer
+    var fps_T = 50;//FPSDisplayer
+    var fps_T1 = 50;//FPSDisplayer
+    var fps_T2 = 50;//FPSDisplayer
+    var actionBarMSG;
+    var actionBarTime = -1;
+    //set
+    var FramePerSencond = 50;//FPSset
+    var cardUseMode = 1;
+    var displayWave = true;
+    var displayBuildingHp = true;
+    var displayBuildingMist = true;
+    var displayMouseCircleWithoutDelay = true;
+
+    var MainVolume = 0.4;
+    var BGMVolume = 1.0;
+    var FootVolume = 0.1;
+    var ShootVolume = 0.3;
+    var UIVolume = 1.0;
+    var BoomVolume = 1.0;
+    var HumanVolume = 1.0;
+    var BuildVolume = 1.0;
+
+    //
+    var newPlayerTipAnimation = 0;
+    var winAnimation = 0;
+    var loseAnimation = 0;
+    var tabUse = false;
+    var cardchoose = 0;
+    var gamestat = 1;
+    var gametick_player = 0;
+    var gametick_skill = 0;
+    var ping_player = 0.0;
+    var ping_old_player = 0.0;
+    var ping_skill = 0.0;
+    var ping_old_skill = 0.0;
+    var ping = 0;
+    var hpanimation = {};
+    var Window_height = window.innerHeight;
+    var Window_width = window.innerWidth;
+    var key_w = false;
+    var key_s = false;
+    var key_a = false;
+    var key_d = false;
+    var mouse_x = 0.0;
+    var mouse_y = 0.0;
+    var PlayerCount;
+    var Tracing = false;
+    var TracingOs = 0;
+    var TracingObmx = 0;
+    var TracingObmy = 0;
+    var respawnTime = 0;
+    var selfPlayer = {
+      id : id,
+      name : '訪客',
+      health : 100,
+      team : 1,
+      mp : 10,
+      bp : 3,
+      x : 0,
+      y : 0,
+      flip : false,
+      speed : 3,
+      online : 1,
+      motion_x : 0.0,
+      motion_y : 0.0,
+      damage : 20,
+      animation : 0
+    };
+    obs_map_canvas = document.getElementById("obs_map");
+    obstx = obs_map_canvas.getContext("2d");
+    var obsimg = document.getElementById('obs');
+  </script>
+  <script src="scripts/Game.js"></script>
+  <script src="scripts/Draw.js"></script>
+  <script src="scripts/Input.js"></script>
+  <script src="scripts/MainLobby.js"></script>
+  <script src="scripts/Socket.js"></script>
+  <script src="scripts/Terrain.js"></script>
+  <script src="scripts/jqueryrotate.js"></script>
+  <script src="scripts/Carduse.js"></script>
+  <script src="scripts/gpu.js"></script>
+  <script src="scripts/newPlayer.js"></script>
+  <script src="scripts/jquery-ui/jquery-ui.js"></script>
+</body>
+</html>

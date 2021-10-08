@@ -1,0 +1,113 @@
+* { padding: 0; margin: 0; }
+canvas { background: #3C3C3C; display: block; margin: 0 auto; }
+
+/*
+@font-face {
+  font-family: jffont;
+  src: url(http://example.com/fonts/Gentium.woff);
+}
+
+p { font-family: jffont, serif; }
+div { font-family: jffont, serif; }
+input { font-family: jffont, serif; }
+*/
+
+#message-box {
+    width: 97%;
+    display: inline-block;
+    height: 180px;
+}
+#msg {
+    position: absolute;
+    top: 40px;
+    right : 0px;
+    height: 180px;
+    width: 25vw;
+    overflow: auto;
+    padding: 12px;
+    background: #121212;
+    opacity: 0.8;
+    z-index: 1;
+}
+
+#chat-box{
+   position: absolute;  top: 0px;
+}
+
+.msg-bg {
+    height: 180px;
+    overflow: auto;
+    padding: 12px;
+    background: #121212;
+    opacity: 0.4;
+    z-index: 1;
+}
+
+.z-index10{z-index: 10;}
+.magiccard{overflow:hidden;}
+.magiccard img{transform:translate(0px,0px)scale(1.0,1.0);transition: all 0.2s ease-out;z-index: 0;}
+.magiccard img:hover{transform:translate(25px,-50px)scale(1.5,1.5);z-index: 10;}
+.magiccard {overflow:visible;width: 6rem;}
+
+.card0{
+  animation: cardFrames linear 0.5s;
+}
+.card1{
+  animation: cardFrames linear 0.5s;
+}
+.card2{
+  animation: cardFrames linear 0.5s;
+}
+.card3{
+  animation: cardFrames linear 0.5s;
+}
+
+@keyframes cardFrames{
+  0% {
+    transform:  translate(303px,155px)rotate(360deg);
+  }
+  100% {
+    transform:  translate(0,0)  rotate(0deg) ;
+  }
+}
+
+
+.cardUse{
+  animation: cardUseFrames linear 0.6s;
+  animation-iteration-count: 1;
+  animation-fill-mode : forwards;
+  transform-origin: 50% 50%;
+}
+
+@keyframes cardUseFrames{
+  0% {
+    transform:  translate(-50vw,168px)  rotate(30deg) scaleX(1.00) scaleY(1.00) ;
+  }
+  11% {
+    transform:  translate(0vw,50vw)  rotate(50deg) scaleX(1.00) scaleY(1.00) ;
+  }
+  23% {
+    transform:  translate(8vw,32vw)  rotate(100deg) scaleX(1.00) scaleY(1.00) ;
+  }
+  37% {
+    transform:  translate(15vw,25vw)  rotate(150deg) scaleX(1.00) scaleY(1.00) ;
+  }
+  54% {
+    transform:  translate(20vw,18vw)  rotate(200deg) scaleX(1.00) scaleY(1.00) ;
+  }
+  73% {
+    transform:  translate(30vw,2vw)  rotate(250deg) scaleX(1.00) scaleY(1.00) ;
+  }
+  79% {
+    transform:  translate(44vw,-1vw)  rotate(300deg) scaleX(0.74) scaleY(0.74) ;
+  }
+  87% {
+    transform:  translate(46vw,-2vw)  rotate(340deg) scaleX(0.36) scaleY(0.36) ;
+  }
+  95% {
+    transform:  translate(47vw,-3vw)  rotate(350deg) scaleX(0.15) scaleY(0.15) ;
+  }
+  100% {
+    transform:  translate(48vw,-4vw)  rotate(360deg) scaleX(0.00) scaleY(0.00) ;
+  }
+}

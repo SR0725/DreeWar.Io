@@ -23,6 +23,7 @@ $( function() {
       {label: '/gamerule gameStartingJoin true/false'},
       {label: '/gameval set mpBasicRegVal'},
       {label: '/gameval set bpBasicRegVal'},
+      {label: '/gameval set winScore'},
       {label: '/gameval get bpBasicRegVal'},
       {label: '/gameval get mpBasicRegVal'},
       {label: '/gameval get winScore'},
@@ -77,7 +78,7 @@ document.onkeydown=function(event){
         }
         break;
       case 9:
-        tabUse = true;
+        //tabUse = true;
         break;
       case 69:
         if(gamestat == 2){
@@ -158,9 +159,18 @@ document.onmousedown=function(event){
   if (event.button==2)
     mouseRight = true;
   else{
-    if(gamestat == 2)
-      if(cardUseMode == 1)
+    if(gamestat == 2){
+      //tip next
+      if(mouse_x > 255 && mouse_x < 305 && mouse_y > 100 && mouse_y < 125){
+        newPlayerTipAnimation += 1;
+        musicPlay('Music_mouserelease',UIVolume);
+      }else if(mouse_x > 255 && mouse_x < 273 && mouse_y > 20 && mouse_y < 38){
+        newPlayerTipAnimation = 19;
+        musicPlay('Music_rollover',UIVolume);
+      }else if(cardUseMode == 1){//使用
         skillCardUse();
+      }
+    }
   }
 };
 

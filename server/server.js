@@ -24,6 +24,7 @@ spawnTowerList[3] = {x:4019,y:636,team:2};
 var bluescore = 0;
 var redscore = 0;
 
+var gameUpdateFunction;
 var gamestat = 1;         //遊戲狀態 0 尚未開始 1遊戲開始 2 遊戲結算等待重製
 var onlineCount = 0;      //遊戲人數
 var blueTeamCount = 0;    //藍隊人數
@@ -38,7 +39,7 @@ var skillindex = 0;       //系統紀錄SKILL列表長度用
 var effectindex = 0;      //系統紀錄EFFECT列表長度用
 var buildingindex = 0;      //系統紀錄building列表長度用
 var gametick = 0;         //遊戲時刻(每20MS加一)
-
+var gamestarting = false;
 //MP AND BP GET
 var beegen_count = {};
 beegen_count[1] = 0;
@@ -72,6 +73,11 @@ io.on('connection', (socket) => {
       try {
         oplist[socket.id] = false;
         onlineCount++;
+        if(onlineCount >= 4 && gamestarting == false){
+          gamestarting = true;
+          io.emit("msg", {message: '遊戲將在10秒後開始!',name: '世界之聲',});
+          setTimeout(function(){gameStart();},10000);
+        }
         logData['name'] = logData['name'].replace(/</g, "&lt;");
         logData['name'] = logData['name'].replace(/>/g, "&gt;");
         logData['name'] = logData['name'].replace(/"/g, "&quot;");
@@ -113,7 +119,10 @@ io.on('connection', (socket) => {
           if(gameStartingJoin){
             io.to(socket.id).emit("buildDataInt", buildinglist);
             io.to(socket.id).emit("playerDataUpdata", playerlist);
-            setTimeout(function(){io.to(socket.id).emit("gameStart");},500);
+            setTimeout(function(){
+              io.to(socket.id).emit("gameStart");
+              io.to(socket.id).emit("kdaDataGet", kdalist);//更新KDA版
+            },500);
             socket.join("GameRoom");
             io.to("GameRoom").emit("playerDataUpdata", playerlist);
           }else {
@@ -123,6 +132,7 @@ io.on('connection', (socket) => {
       } catch (e) {
         console.log('有些錯誤在login階段發生了!詳細訊息:'+e);
       }
+
     });
     /*遊戲開始前 加入紅藍隊伍*/
     socket.on("blueTeamJoin", () => {
@@ -606,6 +616,9 @@ function gameSystem() {
         io.to(id).emit("loseGame");
     }
     gamestat = 3;
+    setTimeout(function(){
+      gameRestart();
+    },15000);
   }else if(redscore >= winscore){
     for (let [id ,player] of Object.entries(playerlist)) {
       if(player['team'] == 2)
@@ -614,6 +627,9 @@ function gameSystem() {
         io.to(id).emit("loseGame");
     }
     gamestat = 3;
+    setTimeout(function(){
+      gameRestart();
+    },15000);
   }
   //佔領成功粒子特效
   for (var i = 1; i <= 4; i++) {
@@ -701,8 +717,8 @@ function gameSystem() {
   for (let [index ,build] of Object.entries(spawnTowerList)) {
     for (let [id ,player] of Object.entries(playerlist)) {
       if(player['team'] != build['team']){
-        if(colliderBoxCircle(player['x'],player['y'],64,128,build['x'],build['y'],600)){
-          shoot(build['x'],build['y'],player['x'],player['y'],build['team'],40);
+        if(colliderBoxCircle(player['x'],player['y'],64,128,build['x'],build['y'],700)){
+          shoot(build['x'],build['y'],player['x'],player['y'],build['team'],80);
         }
       }
     }
@@ -884,7 +900,7 @@ function commandTest(msg,id){
             break;
           case 'restart':
             if(oplist[id] == true){
-              io.emit("restartGame");
+              gameRestart();
             }else{
               io.to(id).emit("msg", {message: '你的權限無法使用該指令!',name: '世界之聲'});
             }
@@ -936,13 +952,68 @@ function shoot(bx,by,px,py,team,damage){
 }
 
 function gameStart(){
+  gamestarting = true;
   io.to("GameRoom").emit("playerCount",onlineCount);
   io.to("GameRoom").emit("gameStart");
   io.to("GameRoom").emit("kdaDataGet", kdalist);//更新KDA版
   gamestat = 2;
-  setInterval(gameUpdate,20);
+  gameUpdateFunction = setInterval(gameUpdate,20);
   console.log('遊戲開始');
 }//遊戲開始
+
+function gameRestart(){
+  io.to('GameRoom').emit("msg", {message: '世界將在1秒後重置!',name: '世界之聲',});
+  clearInterval(gameUpdateFunction);
+  //世界樹
+  gamestarting = false;
+  occupyTime = 0; // -5 = blue 5 = red
+  eoccupyTime = 0; // -5 = blue 5 = red
+  foccupyTime = {}; // -5 = blue 5 = red
+  foccupyTime[1] = 0; // -5 = blue 5 = red
+  foccupyTime[2] = 0; // -5 = blue 5 = red
+  foccupyTime[3] = 0; // -5 = blue 5 = red
+  foccupyTime[4] = 0; // -5 = blue 5 = red
+  foccupyTime[5] = 0; // -5 = blue 5 = red
+  foccupyTime[6] = 0; // -5 = blue 5 = red
+  foccupyTime[7] = 0; // -5 = blue 5 = red
+  foccupyTime[8] = 0; // -5 = blue 5 = red
+  spawnTowerList = {}; // -5 = blue 5 = red
+
+  bluescore = 0;
+  redscore = 0;
+
+  gamestat = 1;         //遊戲狀態 0 尚未開始 1遊戲開始 2 遊戲結算等待重製
+  onlineCount = 0;      //遊戲人數
+  blueTeamCount = 0;    //藍隊人數
+  redTeamCount = 0;     //紅隊人數
+  playerlist = {};      //玩家列表與詳細資料
+  kdalist = {};      //玩家擊殺死亡與助攻統計
+  oplist = {};
+  skillObject = {};     //技能物件列表與鄉系資料
+  effectlist = {};      //效果列表與詳細資料
+  buildinglist = {};      //建築列表與詳細資料
+  skillindex = 0;       //系統紀錄SKILL列表長度用
+  effectindex = 0;      //系統紀錄EFFECT列表長度用
+  buildingindex = 0;      //系統紀錄building列表長度用
+  gametick = 0;         //遊戲時刻(每20MS加一)
+
+  //MP AND BP GET
+  beegen_count = {};
+  beegen_count[1] = 0;
+  beegen_count[2] = 0;
+  bp1getTick = 0;
+  bp2getTick = 0;
+
+  flowergen_count = {};
+  flowergen_count[1] = 0;
+  flowergen_count[2] = 0;
+  mp1getTick = 0;
+  mp2getTick = 0;
+
+  setTimeout(function(){
+    io.emit("restartGame");
+  },1000);
+}
 
 app.get('/', (req, res) => {
     res.sendFile( __dirname + '/views/index.html');

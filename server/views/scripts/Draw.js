@@ -112,6 +112,9 @@ function draw() {
     emotionSelect();
   //Bossbar
   gameDisplay();
+  //新手教學
+  if(newPlayerTipAnimation < 19)
+    newPlayerTip();
   //人物list
   if(tabUse)
     tabInfoDisplay();
@@ -126,7 +129,7 @@ function draw() {
 
 function tabInfoDisplay() {
   try {
-    ctx.fillStyle = "rgba(0,0,0,180)";
+    ctx.fillStyle = "rgba(30,30,30,100)";
     ctx.fillRect(Window_width*0.1, Window_height*0.1, Window_width*0.8,Window_height*0.8)
     ctx.textAlign = "left";
     ctx.textBaseline = "middle";
@@ -693,16 +696,11 @@ function particleDisplay() {
           break;
         case 3:
           var img = document.getElementById('brickBrown');
-          var temp_mx = Math.sin(particle['x']) * particle['time']*0.1;
-          var temp_my = Math.sin(particle['y']) * particle['time']*0.1;
-          ctx.drawImage(img, particle['x'] - selfPlayer['x'] + (Window_width/2)-8+temp_mx,particle['y'] - selfPlayer['y'] + (Window_height/2)-8+temp_my,16,16);
-          temp_mx = Math.sin(particle['x'+0.6]) * particle['time']*0.1;
-          temp_my = Math.sin(particle['y'+0.6]) * particle['time']*0.1;
-          ctx.drawImage(img, particle['x'] - selfPlayer['x'] + (Window_width/2)-8+temp_mx,particle['y'] - selfPlayer['y'] + (Window_height/2)-8+temp_my,16,16);
-          temp_mx = Math.sin(particle['x'+1.2]) * particle['time']*0.1;
-          temp_my = Math.sin(particle['y'+1.2]) * particle['time']*0.1;
-          var img = document.getElementById('brickGrey');
-          ctx.drawImage(img, particle['x'] - selfPlayer['x'] + (Window_width/2)-8+temp_mx,particle['y'] - selfPlayer['y'] + (Window_height/2)-8+temp_my,16,16);
+          for (var i = 0; i < 10; i++) {
+            temp_mx = Math.sin(particle['x']+171.59*i) * particle['time']*0.12 + Math.random()*12;
+            temp_my = Math.sin(particle['y']+171.59*i) * particle['time']*0.12 + Math.random()*12;
+            ctx.drawImage(img, particle['x'] - selfPlayer['x'] + (Window_width/2)-8+temp_mx,particle['y'] - selfPlayer['y'] + (Window_height/2)-8+temp_my,16,16);
+          }
           break;
         case 4:
           var img = document.getElementById('hudPlayer_blue');

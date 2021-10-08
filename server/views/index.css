@@ -1,6 +1,17 @@
 * { padding: 0; margin: 0; }
 canvas { background: #3C3C3C; display: block; margin: 0 auto; }
 
+/*
+@font-face {
+  font-family: jffont;
+  src: url(http://example.com/fonts/Gentium.woff);
+}
+
+p { font-family: jffont, serif; }
+div { font-family: jffont, serif; }
+input { font-family: jffont, serif; }
+*/
+
 #message-box {
     width: 97%;
     display: inline-block;
@@ -35,7 +46,7 @@ canvas { background: #3C3C3C; display: block; margin: 0 auto; }
 .z-index10{z-index: 10;}
 .magiccard{overflow:hidden;}
 .magiccard img{transform:translate(0px,0px)scale(1.0,1.0);transition: all 0.2s ease-out;z-index: 0;}
-.magiccard img:hover{transform:translate(150px,-200px)scale(4.0,4.0);z-index: 10;}
+.magiccard img:hover{transform:translate(25px,-50px)scale(1.5,1.5);z-index: 10;}
 .magiccard {overflow:visible;width: 6rem;}
 
 .card0{
